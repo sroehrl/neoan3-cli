@@ -1,0 +1,17 @@
+{
+  "name": "neoan3-cli",
+  "version": "0.0.1",
+  "description": "neoan3 cli helper",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Stefan Roehrl",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^2.19.0"
+  },
+  "bin": {
+    "neoan3": "./index.js"
+  }
+}
