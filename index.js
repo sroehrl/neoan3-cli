@@ -5,7 +5,7 @@ const fs = require('fs');
 let dir ='./';
 
 program
-    .version('0.0.1','-v, --version')
+    .version('0.0.2','-v, --version')
     .option('-h, --help','option description')
     .option('-c, --component <componentname>', 'create component')
     .arguments('<cmd> [name]')
