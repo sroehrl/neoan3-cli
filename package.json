@@ -9,7 +9,8 @@
   "author": "Stefan Roehrl",
   "license": "MIT",
   "dependencies": {
-    "commander": "^2.19.0"
+    "commander": "^2.19.0",
+    "fs": "0.0.1-security"
   },
   "bin": {
     "neoan3": "./index.js"
