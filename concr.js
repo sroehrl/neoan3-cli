@@ -50,25 +50,31 @@ let concr = {
     },
 
     newComponent:function(name){
-
-            //
-            let questions = [
-                {name:'purpose',type:'list',choices:['Route component','API endpoint','Custom Element'],message:'This component mainly serves as:'},
-                {name:'frame',type:'input',message:'Which frame are you using?'}
-                ];
-            inquirer.prompt(questions).then(function(answer){
-                let asIdentifier;
-                switch (answer.purpose) {
-                    case 'Route component':
-                        asIdentifier = 'route';
-                        break;
-                    case 'API endpoint':
-                        inquirer.prompt([]);
-                        asIdentifier = 'api';
-                        break;
-                }
-                fileCreator.component(name,asIdentifier,answer.frame);
+            // in a neoan3 app?
+            fs.stat('./component',function(err, stats){
+               if(err){
+                   concr.error('Dude, I don\'t seem to be running on the root of a neoan3 app. Are you even in the right directory?')
+               } else {
+                   let questions = [
+                       {name:'purpose',type:'list',choices:['Route component','API endpoint','Custom Element'],message:'This component mainly serves as:'},
+                       {name:'frame',type:'input',message:'Which frame are you using?'}
+                   ];
+                   inquirer.prompt(questions).then(function(answer){
+                       let asIdentifier;
+                       switch (answer.purpose) {
+                           case 'Route component':
+                               asIdentifier = 'route';
+                               break;
+                           case 'API endpoint':
+                               inquirer.prompt([]);
+                               asIdentifier = 'api';
+                               break;
+                       }
+                       fileCreator.component(name,asIdentifier,answer.frame);
+                   });
+               }
             });
+
 
 
             /*process.exit(1);

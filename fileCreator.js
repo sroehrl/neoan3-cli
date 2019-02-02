@@ -15,7 +15,7 @@ let fileCreator = {
                 content += "    function init(){\n        $this->uni('"+frame+"')->output();\n    }";
             }
             content += "\n}";
-            fs.appendFile(dir + 'component/' + name.toLowerCase() + '/' + name.toLowerCase() +'.ctrl.php', content, function (err) {
+            fs.appendFile(dir + 'component/' + name + '/' + fileCreator.fucase(name) +'.ctrl.php', content, function (err) {
                 if (err) throw err;
                 console.log('Component %s created',name);
             });
