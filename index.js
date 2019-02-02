@@ -4,9 +4,7 @@ const program = require('commander');
 const concr = require('./concr');
 
 program
-    .version('0.0.2','-v, --version')
-    .option('-h, --help','option description')
-    .option('-c, --component <componentname>', 'create component')
-    .arguments('<cmd> <type> [name]')
+    .version('0.0.3','-v, --version')
+    .arguments('<cmd> [type] [name]')
     .action(concr.executer)
     .parse(process.argv);

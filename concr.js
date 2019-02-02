@@ -8,14 +8,19 @@ let concr = {
         if(typeof cmd !== 'undefined'){
             switch(cmd){
                 case 'new':
+                    if(typeof type == 'undefined'){
+                        concr.error('New what? Try again.')
+                    }
                     let func = concr.processType(type);
                     if(func){
                         if(typeof name === 'undefined'){
-                            concr.error('missing component name');
+                            concr.error('Yeah, so you wanna add a component name to that command, human!');
                         } else {
                             concr[func](name)
                         }
                     }
+                    break;
+                case 'help': console.log('Please refer to https://github.com/sroehrl/neoan3 for help. Currently, neoan3-cli has very limited possibilities.');
                     break;
                 default: concr.error();
             }
