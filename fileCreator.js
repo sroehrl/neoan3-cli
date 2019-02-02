@@ -6,7 +6,7 @@ let fileCreator = {
         if (!fs.existsSync(folder)) {
             fs.mkdirSync(folder);
             // version
-            fs.appendFile(dir + 'component/' + name + '/version.json', fileCreator.versionJson(name), function (err) {
+            fs.appendFile(dir + 'component/' + name.toLowerCase() + '/version.json', fileCreator.versionJson(name), function (err) {
                 if (err) throw err;
             });
             // php
@@ -15,7 +15,7 @@ let fileCreator = {
                 content += "    function init(){\n        $this->uni('"+frame+"')->output();\n    }";
             }
             content += "\n}";
-            fs.appendFile(dir + 'component/' + name + '/' + name +'.ctrl.php', content, function (err) {
+            fs.appendFile(dir + 'component/' + name.toLowerCase() + '/' + name.toLowerCase() +'.ctrl.php', content, function (err) {
                 if (err) throw err;
                 console.log('Component %s created',name);
             });
@@ -27,10 +27,13 @@ let fileCreator = {
     phpFrame:function(name, frame, useFrame){
         let answer =  "<?php\nnamespace Neoan3\\Components;\nuse Neoan3\\Core\\Unicore;\n\n";
         if(useFrame){
-            answer += "use Neoan3\\Frame\\"+frame+";\n\n"
+            answer += "use Neoan3\\Frame\\"+fileCreator.fucase(frame)+";\n\n"
         }
-        answer += "class "+name+" extends Unicore{\n"
+        answer += "class "+fileCreator.fucase(name)+" extends Unicore{\n";
         return answer;
+    },
+    fucase:function(string){
+        return string.charAt(0).toUpperCase() + string.slice(1);
     },
     versionJson:function(name){
         let json = {"version":"0.0.1","name":name};

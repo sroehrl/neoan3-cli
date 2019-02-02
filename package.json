@@ -10,6 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "commander": "^2.19.0",
+    "download-git-repo": "^1.1.0",
     "fs": "0.0.1-security",
     "inquirer": "^6.2.1",
     "prompt": "^1.0.0",

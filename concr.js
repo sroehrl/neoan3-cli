@@ -1,6 +1,7 @@
 const inquirer = require('inquirer');
 const fs = require('fs');
 const fileCreator = require('./fileCreator');
+const download = require('download-git-repo');
 let concr = {
 
     executer:function(cmd, type, name){
@@ -26,13 +27,22 @@ let concr = {
             case 'component':
                 res = 'newComponent';
                 break;
+            case 'app':
+                res = 'newApp';
+                break;
             default: this.error('Unknown type %s',type);
                 break;
 
         }
         return res;
     },
-
+    newApp:function(name){
+        let msg = 'Creating...\n';
+        msg += 'Enter "'+name+'" and run composer install & npm install to finish setup';
+        download('sroehrl/neoan3',name,function(err){
+            console.log(err ? 'Could not download':msg)
+        })
+    },
 
     newComponent:function(name){
 
