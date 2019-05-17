@@ -2,6 +2,7 @@ const inquirer = require('inquirer');
 const fs = require('fs');
 const fileCreator = require('./fileCreator');
 const download = require('download-git-repo');
+const execute = require('child_process').exec;
 let concr = {
 
     executer:function(cmd, type, name){
@@ -46,10 +47,17 @@ let concr = {
     },
     newApp:function(name){
         let msg = 'Creating...\n';
-        msg += 'Enter "'+name+'" and run composer install & npm install to finish setup';
+        msg += 'Enter "'+name+'"';
         download('sroehrl/neoan3',name,function(err){
             console.log(err ? 'Could not download':msg)
-        })
+        },function(success){
+            execute('composer install',(error, stdout, stderr)=>{
+                if(error){
+                    this.error('Failed to run composer. Please do so manually.');
+                }
+                console.log('All done. In most setups running "npm install" is a good idea now...');
+            });
+        });
     },
     newFrame:function(name){
         fs.stat('./frame',function(err, stats){
