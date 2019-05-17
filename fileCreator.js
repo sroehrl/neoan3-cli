@@ -31,7 +31,7 @@ let fileCreator = {
             this.php.class(name,'Unicore');
             switch (cType) {
                 case 'route':
-                    this.php.classFunction('init',"$this->uni('"+frame+"')->output();");
+                    this.php.classFunction('init',"$this->uni()->output();");
                     break;
                 case 'api':
                     this.php.classFunction('get'+this.fucase(name),"","$obj");
