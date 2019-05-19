@@ -4,7 +4,7 @@ const program = require('commander');
 const concr = require('./concr');
 
 program
-    .version('0.0.8','-v, --version')
+    .version('0.1.0','-v, --version')
     .arguments('<cmd> [type] [name]')
     .action(concr.executer)
     .parse(process.argv);
