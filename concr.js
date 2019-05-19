@@ -49,14 +49,13 @@ let concr = {
         let msg = 'Creating...\n';
         download('sroehrl/neoan3','./',function(err){
             console.log(err ? 'Could not download':msg);
-
-            execute('composer install',(error, stdout, stderr)=>{
+            fileCreator.htaccess(name);
+            execute('composer install --quiet',(error, stdout, stderr)=>{
                 if(error){
                     console.log('Failed to run composer. Please do so manually.');
                     process.exit(1);
                 }
-                console.log(stdout);
-                console.log(stderr);
+
                 console.log('All done. In most setups running "npm install" is a good idea now...');
             });
         });

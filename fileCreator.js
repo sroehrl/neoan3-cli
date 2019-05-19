@@ -91,6 +91,18 @@ let fileCreator = {
             this.fileString += "}\n";
         }
     },
+    htaccess:function(base){
+        let content = fs.readFileSync('./.htaccess','utf8');
+        let newContent = content.replace(/RewriteBase\s\/[a-z0-9\/-]+/im,function(x){
+            return 'RewriteBase /'+base+'/';
+        });
+        fs.writeFile('./.htaccess',newContent,function(err,outd){
+            if(err){
+                throw new Error(err);
+            }
+        });
+
+    },
     fucase:function(string){
         return string.charAt(0).toUpperCase() + string.slice(1);
     },
