@@ -1,6 +1,7 @@
 const inquirer = require('inquirer');
 const fs = require('fs');
 const fileCreator = require('./fileCreator');
+const add = require('./add');
 const download = require('download-git-repo');
 const execute = require('child_process').execSync;
 let concr = {
@@ -22,6 +23,12 @@ let concr = {
                     }
                     break;
                 case 'help': console.log('Please refer to https://github.com/sroehrl/neoan3 for help. Currently, neoan3-cli has very limited possibilities.');
+                    break;
+                case 'add':
+                    if(typeof type == 'undefined'){
+                        concr.error('Possible entities are "add component [repo]", "add model [repo]", "add frame [repo]"')
+                    }
+                    add.processInput(name,type);
                     break;
                 default: concr.error();
             }
@@ -53,7 +60,7 @@ let concr = {
         let msg = 'Download completed, running composer...\n';
         download('sroehrl/neoan3','./',function(err){
             console.log(err ? 'Could not download':msg);
-
+            console.log('NOTE: I am trying to run composer synchronously & quiet. If this fails, please run "composer install"');
             fileCreator.htaccess(name);
             execute('composer install --quiet',(error, stdout, stderr)=>{
                 if(error){
