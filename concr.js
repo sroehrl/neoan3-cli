@@ -39,6 +39,9 @@ let concr = {
             case 'frame':
                 res = 'newFrame';
                 break;
+            case 'model':
+                res = 'newModel';
+                break;
             default: this.error('Unknown type '+type);
                 break;
 
@@ -46,9 +49,11 @@ let concr = {
         return res;
     },
     newApp:function(name){
-        let msg = 'Creating...\n';
+        console.log('Fetching remote files...');
+        let msg = 'Download completed, running composer...\n';
         download('sroehrl/neoan3','./',function(err){
             console.log(err ? 'Could not download':msg);
+
             fileCreator.htaccess(name);
             execute('composer install --quiet',(error, stdout, stderr)=>{
                 if(error){
@@ -56,8 +61,9 @@ let concr = {
                     process.exit(1);
                 }
 
-                console.log('All done. In most setups running "npm install" is a good idea now...');
+
             });
+            console.log('All done. In most setups running "npm install" is a good idea now...');
         });
     },
     newFrame:function(name){
@@ -68,6 +74,14 @@ let concr = {
                 fileCreator.frame(name);
             }
         });
+    },
+    newModel:function(name){
+        fs.stat('./model',function(err, stats){
+            if(err){
+                concr.error('Are we in the wrong directory, or is this not a neoan3 instance?');
+            }
+            fileCreator.model(name);
+        })
     },
 
     newComponent:function(name){

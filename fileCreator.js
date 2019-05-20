@@ -2,8 +2,8 @@ const fs = require('fs');
 let dir ='./';
 let fileCreator = {
     create:function(type,name){
-        if(this.directoryManager.folder(type,name)){
-            this.directoryManager.version(type,name);
+        if(this.directoryManager.folder(type,name.toLowerCase())){
+            this.directoryManager.version(type,name.toLowerCase());
             console.log('writing...');
             return true;
         }
@@ -15,10 +15,16 @@ let fileCreator = {
             this.php.use('Core\\Serve');
             this.php.class(name,'Serve');
             this.php.closingCurly();
-            fs.appendFile(dir+'frame/'+name.toLowerCase()+'/'+fileCreator.fucase(name)+'.php',this.php.fileString, function(err){
-                if (err) throw err;
-                console.log('Frame %s created',name);
-            });
+            this.writeToFile(name,'frame');
+        }
+    },
+    model:function(name){
+        if(this.create('model',name)){
+            this.php.namespace('Model');
+            this.php.class(name,'IndexModel');
+            this.php.classFunction('byId','','$id','static');
+            this.php.closingCurly();
+            this.writeToFile(name,'model');
         }
     },
     component:function(name,cType, frame){
@@ -39,10 +45,7 @@ let fileCreator = {
                     break;
             }
             this.php.closingCurly();
-            fs.appendFile(dir + 'component/' + name + '/' + fileCreator.fucase(name) +'.ctrl.php', this.php.fileString, function (err) {
-                if (err) throw err;
-                console.log('Component %s created',name);
-            });
+            this.writeToFile(name,'component');
         }
 
     },
@@ -73,15 +76,23 @@ let fileCreator = {
             }
             this.fileString += " {\n";
         },
-        classFunction:function(name,inner,arg){
+        classFunction:function(name,inner,arg,typus='public'){
             this.init();
             this.indentation(1);
-            this.publicFunction(name,arg);
+            if(typus === 'public'){
+                this.publicFunction(name,arg);
+            } else if(typus === 'static'){
+                this.staticFunction(name,arg);
+            }
             this.indentation(2);
             this.fileString += inner + "\n";
             this.indentation(1);
             this.closingCurly();
             this.fileString += "\n";
+        },
+        staticFunction:function(fname,arg){
+            this.init();
+            this.fileString += "static function "+fname+"("+(arg?arg:'')+"){\n";
         },
         publicFunction:function(fname,arg){
             this.init();
@@ -102,6 +113,19 @@ let fileCreator = {
             }
         });
 
+    },
+    writeToFile:function(name,type){
+        let localExt;
+        switch (type) {
+            case 'component': localExt = '.ctrl.php'; break;
+            case 'model': localExt = '.model.php'; break;
+            default: localExt = '.php';break;
+        }
+        let loType = this.fucase(type);
+        fs.appendFile(dir + type+'/' + name.toLowerCase() + '/' + fileCreator.fucase(name) +localExt, this.php.fileString, function (err) {
+            if (err) throw err;
+            console.log('%s %s created',loType,name);
+        });
     },
     fucase:function(string){
         return string.charAt(0).toUpperCase() + string.slice(1);
