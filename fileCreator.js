@@ -27,17 +27,25 @@ let fileCreator = {
             this.writeToFile(name,'model');
         }
     },
-    component:function(name,cType, frame){
+    component:function(name,cType, answer){
         if(this.create('component',name)){
             this.php.namespace('Components');
             this.php.use('Core\\Unicore');
             if(cType === 'api'){
-                this.php.use('Frame\\'+this.fucase(frame));
+                this.php.use('Frame\\'+this.fucase(answer.frame));
             }
             this.php.class(name,'Unicore');
             switch (cType) {
                 case 'route':
-                    this.php.classFunction('init',"$this->uni()->output();");
+                    let inner = "$this->uni()->";
+                    if(answer.frame){
+                        inner = "$this->uni('"+answer.frame+"')->";
+                    }
+                    if(answer.hasView){
+                        this.htmlView(name);
+                        inner += "hook('main','"+name.toLowerCase()+"')->";
+                    }
+                    this.php.classFunction('init',inner+"output();");
                     break;
                 case 'api':
                     this.php.classFunction('get'+this.fucase(name),"","$obj");
@@ -101,6 +109,13 @@ let fileCreator = {
         closingCurly:function(){
             this.fileString += "}\n";
         }
+    },
+    htmlView:function(name){
+        fs.writeFile(dir+'component/'+name.toLowerCase()+'/'+name.toLowerCase()+'.view.html','<h1>'+name+'</h1>',function(err,outd){
+            if(err){
+                throw new Error(err);
+            }
+        });
     },
     htaccess:function(base){
         let content = fs.readFileSync('./.htaccess','utf8');

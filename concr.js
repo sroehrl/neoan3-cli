@@ -6,37 +6,39 @@ const download = require('download-git-repo');
 const execute = require('child_process').execSync;
 let concr = {
 
-    executer:function(cmd, type, name){
-        if(typeof cmd !== 'undefined'){
-            switch(cmd){
+    executer: function (cmd, type, name) {
+        if (typeof cmd !== 'undefined') {
+            switch (cmd) {
                 case 'new':
-                    if(typeof type == 'undefined'){
+                    if (typeof type == 'undefined') {
                         concr.error('New what? Try again.')
                     }
                     let func = concr.processType(type);
-                    if(func){
-                        if(typeof name === 'undefined'){
+                    if (func) {
+                        if (typeof name === 'undefined') {
                             concr.error('Yeah, so you wanna add a component name to that command, human!');
                         } else {
                             concr[func](name)
                         }
                     }
                     break;
-                case 'help': console.log('Please refer to https://github.com/sroehrl/neoan3 for help. Currently, neoan3-cli has very limited possibilities.');
+                case 'help':
+                    console.log('Please refer to https://github.com/sroehrl/neoan3 for help. Currently, neoan3-cli has very limited possibilities.');
                     break;
                 case 'add':
-                    if(typeof type == 'undefined'){
+                    if (typeof type == 'undefined') {
                         concr.error('Possible entities are "add component [repo]", "add model [repo]", "add frame [repo]"')
                     }
-                    add.processInput(name,type);
+                    add.processInput(name, type);
                     break;
-                default: concr.error();
+                default:
+                    concr.error();
             }
         }
     },
-    processType:function(type){
+    processType: function (type) {
         let res;
-        switch(type){
+        switch (type) {
             case 'component':
                 res = 'newComponent';
                 break;
@@ -49,21 +51,22 @@ let concr = {
             case 'model':
                 res = 'newModel';
                 break;
-            default: this.error('Unknown type '+type);
+            default:
+                this.error('Unknown type ' + type);
                 break;
 
         }
         return res;
     },
-    newApp:function(name){
+    newApp: function (name) {
         console.log('Fetching remote files...');
         let msg = 'Download completed, running composer...\n';
-        download('sroehrl/neoan3','./',function(err){
-            console.log(err ? 'Could not download':msg);
+        download('sroehrl/neoan3', './', function (err) {
+            console.log(err ? 'Could not download' : msg);
             console.log('NOTE: I am trying to run composer synchronously & quiet. If this fails, please run "composer install"');
             fileCreator.htaccess(name);
-            execute('composer install --quiet',(error, stdout, stderr)=>{
-                if(error){
+            execute('composer install --quiet', (error, stdout, stderr) => {
+                if (error) {
                     console.log('Failed to run composer. Please do so manually.');
                     process.exit(1);
                 }
@@ -73,64 +76,107 @@ let concr = {
             console.log('All done. In most setups running "npm install" is a good idea now...');
         });
     },
-    newFrame:function(name){
-        fs.stat('./frame',function(err, stats){
-            if(err){
-                concr.error('Hey Stormtrooper, this is not the directory you are looking for. Navigate to the root of a neoan3 app!')
-            } else {
-                fileCreator.frame(name);
-            }
-        });
+    newFrame: function (name) {
+        this.testEnvironment();
+        fileCreator.frame(name);
     },
-    newModel:function(name){
-        fs.stat('./model',function(err, stats){
-            if(err){
+    newModel: function (name) {
+        fs.stat('./model', function (err, stats) {
+            if (err) {
                 concr.error('Are we in the wrong directory, or is this not a neoan3 instance?');
             }
             fileCreator.model(name);
         })
     },
 
-    newComponent:function(name){
-            // in a neoan3 app?
-            fs.stat('./component',function(err, stats){
-               if(err){
-                   concr.error('Dude, I don\'t seem to be running on the root of a neoan3 app. Are you even in the right directory?')
-               } else {
-                   let frames = fs.readdirSync('./frame');
+    newComponent: function (name) {
+        this.testEnvironment();
+        let frames = fs.readdirSync('./frame');
+        if(frames.length<1){
+            frames = ['NO FRAME INSTALLED'];
+        }
+        let frameChoice = {
+            name: 'frame',
+            type: 'list',
+            choices: frames,
+            message: 'Which frame are you using?',
+            when: function (answers) {
+                return answers.useFrame === true || answers.purpose === 'API endpoint'
+            }
+        };
 
-                   let questions = [
-                       {name:'purpose',type:'list',choices:['Route component','API endpoint','Custom Element'],message:'This component mainly serves as:'}
-                   ];
-                   inquirer.prompt(questions).then(function(answer){
-                       let asIdentifier;
-                       switch (answer.purpose) {
-                           case 'Route component':
-                               asIdentifier = 'route';
-                               fileCreator.component(name,asIdentifier);
-                               break;
-                           case 'API endpoint':
-                               asIdentifier = 'api';
-                               if(frames.length<1){
-                                   this.error('I was gonna ask you which of your frames you want to use. But I find nothing, nada ...');
-                               }
-                               inquirer.prompt([{name:'frame',type:'list',choices:frames, message:'Which frame are you using?'}]).then(function(res){
-                                   fileCreator.component(name,asIdentifier,res.frame);
-                               });
-                               break;
-                           default:
-                               fileCreator.component(name,'custom');
-                               break;
-                       }
 
-                   });
-               }
-            });
+
+        let componentTypeQuestions = [
+            {
+                name: 'purpose',
+                type: 'list',
+                choices: ['Route component', 'API endpoint', 'Custom Element'],
+                message: 'This component mainly serves as:'
+            },
+            {
+                name: 'hasView',
+                type: 'confirm',
+                message: 'Do you want to create a view?',
+                default: true,
+                when:function(answers){
+                    return answers.purpose === 'Route component'
+                }
+            },
+            {
+                name: 'useFrame',
+                type: 'confirm',
+                message: 'do you want to use a frame?',
+                default:true,
+                when: function (answers) {
+                    return answers.purpose === 'Route component'
+                }
+            }, frameChoice
+        ];
+        inquirer.prompt(componentTypeQuestions).then(function (answer) {
+            let asIdentifier;
+            switch (answer.purpose) {
+                case 'Route component':
+                    asIdentifier = 'route';
+                    if (answer.frame === 'NO FRAME INSTALLED') {
+                        answer.frame = false;
+                    }
+                    fileCreator.component(name, asIdentifier,answer);
+                    break;
+                case 'API endpoint':
+                    asIdentifier = 'api';
+                    if (answer.frame === 'NO FRAME INSTALLED') {
+                        concr.error('You cannot create an API endpoint without a frame.');
+                    }
+                    fileCreator.component(name, asIdentifier, answer);
+
+                    break;
+                default:
+                    fileCreator.component(name, 'custom');
+                    break;
+            }
+
+        },function(err){
+            this.error('Execution failed');
+        });
 
 
     },
-    error:function(er){
-        console.log(er||'unknown command');
+    testEnvironment:function(){
+        let wrong = false;
+        fs.stat('./component', function (err, stats) {
+            if(err) wrong = true;
+        });
+        fs.stat('./frame', function (err, stats) {
+            if(err) wrong = true;
+        });
+
+        if(wrong){
+            this.error('Not a neoan3 environment. Wrong directory?')
+        }
+    },
+    error: function (er) {
+        console.log(er || 'unknown command');
         process.exit(1);
     }
 };

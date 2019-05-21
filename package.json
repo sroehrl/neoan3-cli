@@ -1,6 +1,6 @@
 {
   "name": "neoan3-cli",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "neoan3 cli helper",
   "main": "index.js",
   "scripts": {
