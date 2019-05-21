@@ -36,3 +36,21 @@ This command will guide you through the creation of a new component, prefilling 
 `neoan3 new frame [frame-name]`
 
 This command generates a new frame.
+### new model
+`neoan3 new model [model-name]`
+
+This command creates a new model.
+
+## add
+`neoan3 add [destination] [package]`
+
+Adding components makes the following assumptions:
+-  the component is registered as a composer-package
+-  it is either targeted at being a frame, a model or a component
+
+for all other packages, please use the respective package manager (e.g. composer or npm) or version control system (e.g. GIT).
+>neoan3 apps are "regular" composer packages. Please include them using `composer require`
+
+_example_
+
+`neoan3 add frame neoan3-frame/kit`

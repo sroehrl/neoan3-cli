@@ -5,7 +5,10 @@ const add = require('./add');
 const download = require('download-git-repo');
 const execute = require('child_process').execSync;
 let concr = {
-
+    getCurrentVersion:function(){
+        let pack = JSON.parse(fs.readFileSync(__dirname+'/package.json','utf8'));
+        return pack.version;
+    },
     executer: function (cmd, type, name) {
         if (typeof cmd !== 'undefined') {
             switch (cmd) {
