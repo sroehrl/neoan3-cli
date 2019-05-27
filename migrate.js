@@ -48,7 +48,18 @@ const migrate = {
     processUp:function(credentials){
         this.connect(credentials).then(()=>{
             this.compare.getFullDb(credentials).then(()=>{
-                this.compare.compareUp();
+                let queries = this.compare.compareUp();
+
+                queries.forEach((sql)=>{
+                    try{
+                        let execute = conn.query(sql);
+                    } catch (e) {
+                        console.log('Error while writing to db');
+                    }
+
+                });
+                console.log('I ran '+queries.length+' queries');
+                console.log('done');
                 process.exit();
 
             })
@@ -84,11 +95,11 @@ const migrate = {
                     if(typeof this.knownTables[table] === 'undefined'){
                         queries.push(this.createTableSql(table,model));
                     } else {
-                        this.deepComparison(table,model);
+                        queries = queries.concat(this.deepComparison(table,model));
                     }
                 })
             });
-            console.log(queries);
+            return queries;
         },
         compareDown:function(){
             Object.keys(this.knownModels).forEach((model)=>{
@@ -104,9 +115,25 @@ const migrate = {
             })
         },
         deepComparison:function(table,model){
-            Object.keys(this.knownModels[model][table]).forEach((declaration)=>{
+            let queries = [];
+            Object.keys(this.knownModels[model][table]).forEach((field,i)=>{
+                let queryString = 'ALTER TABLE `'+table+'` ';
+                // does field exist in db?
+                if(typeof this.knownTables[table][field] === 'undefined'){
+                    queryString += 'ADD COLUMN `'+field+'` '+this.knownModels[model][table][field].type;
+                    if(i>0){
+                        queryString += ' AFTER `'+Object.keys(this.knownModels[model][table])[i-1]+'`';
 
-            })
+                    }
+                    queryString += ";\n";
+                    queries.push(queryString);
+                } else if(this.knownTables[table][field].type !== this.knownModels[model][table][field].type){
+                    queryString += 'MODIFY COLUMN `'+field+'` '+this.knownModels[model][table][field].type+";\n";
+                    queries.push(queryString)
+                }
+
+            });
+            return queries;
         },
         createTableSql:function(table,model){
             let createString = 'CREATE TABLE '+table+'(';
