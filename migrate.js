@@ -67,14 +67,17 @@ const migrate = {
     },
     processDown:function(credentials){
         this.connect(credentials).then(()=>{
-            this.compare.compareDown();
-            Object.keys(this.compare.knownModels).forEach((model)=>{
-                console.log('writing model: '+model);
-                this.writeJson(model);
+            this.compare.getFullDb(credentials).then(()=>{
+                this.compare.compareDown();
+                Object.keys(this.compare.knownModels).forEach((model)=>{
+                    console.log('writing model: '+model);
+                    this.writeJson(model);
 
-            });
-            console.log('done');
-            process.exit()
+                });
+                console.log('done');
+                process.exit()
+            })
+
         });
     },
     writeJson:function(model){
