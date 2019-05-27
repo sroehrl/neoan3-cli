@@ -25,6 +25,9 @@ let fileCreator = {
             this.php.classFunction('byId','','$id','static');
             this.php.closingCurly();
             this.writeToFile(name,'model');
+            fs.appendFile(dir + '/model/' + name.toLowerCase() + '/migrate.json', '{}', function (err) {
+                if (err) throw err;
+            });
         }
     },
     component:function(name,cType, answer){

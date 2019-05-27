@@ -4,6 +4,7 @@ const fileCreator = require('./fileCreator');
 const add = require('./add');
 const download = require('download-git-repo');
 const execute = require('child_process').execSync;
+const migrate = require('./migrate');
 let concr = {
     getCurrentVersion:function(){
         let pack = JSON.parse(fs.readFileSync(__dirname+'/package.json','utf8'));
@@ -34,6 +35,7 @@ let concr = {
                     }
                     add.processInput(name, type);
                     break;
+                case 'migrate': migrate.init(type, name); break;
                 default:
                     concr.error();
             }
