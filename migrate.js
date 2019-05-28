@@ -187,7 +187,7 @@ const migrate = {
         getModelJsons:function(){
             let modelPath = dir+'/model';
             fs.readdirSync(modelPath).forEach((folder)=>{
-                if(folder !== 'index'){
+                if(folder !== 'index' && fs.lstatSync(modelPath+'/'+folder).isDirectory()){
                     this.knownModels[folder] = JSON.parse(fs.readFileSync(modelPath+'/'+folder+'/migrate.json','utf8'))
                 }
 
