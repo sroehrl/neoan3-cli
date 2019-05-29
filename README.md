@@ -54,3 +54,39 @@ for all other packages, please use the respective package manager (e.g. composer
 _example_
 
 `neoan3 add frame neoan3-frame/kit`
+
+## migrate
+
+Currently supports SQL only. 
+
+`neoan3 migrate models [direction]` 
+
+_Credentials_: 
+The tool will memorize your credentials (including your password, if confirmed by the user).
+When switching between multiple projects or databases, you may want to flush these credentials.
+The tool will suggest you to do so if a connection cannot be established, but **you** have to understand the implications
+of working with potentially wrong but valid credentials. Therefore, when working with multiple databases or projects,
+the command `neoan3 migrate flush` is recommended.
+
+When working with version control branches, the following workflow is recommended:
+
+- before checking out a different branch, _migrate down_ and commit
+- after checking out a branch, _migrate up_ 
+
+The migration is highly simplified and works in two directions.
+### migrate down
+
+`neoan3 migrate models down`
+
+This generates migrate.jsons from the connected database structure. The following assumptions are made:
+
+Tables starting with a particular model-name are associated with that model. Example: If a model "user" exists tables starting with "user" are considered.
+This would include table-names like "user", "user_password" or "userEmail". 
+The recommended way for neoan3 is to follow a snake_case naming for tables and columns.
+
+### migrate up
+
+`neoan3 migrate models up`
+
+This creates or alters tables in your connected database based on structural declarations present in your migrate.json files in the folder of models.
+It is important to know that removing a column in your declaration will NOT remove the column from the database, while adding a column will generate the column in your database.
