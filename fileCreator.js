@@ -2,8 +2,8 @@ const fs = require('fs');
 let dir ='./';
 let fileCreator = {
     create:function(type,name){
-        if(this.directoryManager.folder(type,name.toLowerCase())){
-            this.directoryManager.version(type,name.toLowerCase());
+        if(this.directoryManager.folder(type,this.flcase(name))){
+            this.directoryManager.version(type,this.flcase(name));
             console.log('writing...');
             return true;
         }
@@ -25,7 +25,7 @@ let fileCreator = {
             this.php.classFunction('byId','','$id','static');
             this.php.closingCurly();
             this.writeToFile(name,'model');
-            fs.appendFile(dir + '/model/' + name.toLowerCase() + '/migrate.json', '{}', function (err) {
+            fs.appendFile(dir + '/model/' + this.flcase(name) + '/migrate.json', '{}', function (err) {
                 if (err) throw err;
             });
         }
@@ -46,7 +46,7 @@ let fileCreator = {
                     }
                     if(answer.hasView){
                         this.htmlView(name);
-                        inner += "hook('main','"+name.toLowerCase()+"')->";
+                        inner += "hook('main','"+this.flcase(name)+"')->";
                     }
                     this.php.classFunction('init',inner+"output();");
                     break;
@@ -114,7 +114,7 @@ let fileCreator = {
         }
     },
     htmlView:function(name){
-        fs.writeFile(dir+'component/'+name.toLowerCase()+'/'+name.toLowerCase()+'.view.html','<h1>'+name+'</h1>',function(err,outd){
+        fs.writeFile(dir+'component/'+this.flcase(name)+'/'+this.flcase(name)+'.view.html','<h1>'+name+'</h1>',function(err,outd){
             if(err){
                 throw new Error(err);
             }
@@ -140,13 +140,16 @@ let fileCreator = {
             default: localExt = '.php';break;
         }
         let loType = this.fucase(type);
-        fs.appendFile(dir + type+'/' + name.toLowerCase() + '/' + fileCreator.fucase(name) +localExt, this.php.fileString, function (err) {
+        fs.appendFile(dir + type+'/' + this.flcase(name) + '/' + fileCreator.fucase(name) +localExt, this.php.fileString, function (err) {
             if (err) throw err;
             console.log('%s %s created',loType,name);
         });
     },
     fucase:function(string){
         return string.charAt(0).toUpperCase() + string.slice(1);
+    },
+    flcase:function(string){
+        return string.charAt(0).toLowerCase() + string.slice(1);
     },
     directoryManager:{
         folder:function(type,name){
