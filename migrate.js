@@ -50,17 +50,19 @@ const migrate = {
             this.compare.getFullDb(credentials).then(()=>{
                 let queries = this.compare.compareUp();
 
-                queries.forEach((sql)=>{
+                asyncLoop(queries,async(sql)=>{
                     try{
-                        let execute = conn.query(sql);
+                        await conn.query(sql);
                     } catch (e) {
                         console.log('Error while writing to db');
                     }
 
-                });
-                console.log('I ran '+queries.length+' queries');
-                console.log('done');
-                process.exit();
+                }).then(()=>{
+                    console.log('I ran '+queries.length+' queries');
+                    console.log('done');
+                    process.exit();
+                })
+
 
             })
         });
