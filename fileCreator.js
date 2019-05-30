@@ -21,8 +21,9 @@ let fileCreator = {
     model: function (name) {
         if (this.create('model', name)) {
             this.php.namespace('Model');
-            this.php.class(name, 'IndexModel');
+            this.php.class(name+'Model', 'IndexModel');
             this.php.classFunction('byId', '', '$id', 'static');
+            this.php.classFunction('find', '', '$condition', 'static');
             this.php.closingCurly();
             this.writeToFile(name, 'model');
             fs.appendFile(dir + '/model/' + this.flcase(name) + '/migrate.json', '{}', function (err) {
