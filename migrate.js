@@ -62,8 +62,6 @@ const migrate = {
                     console.log('done');
                     process.exit();
                 })
-
-
             })
         });
     },
