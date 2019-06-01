@@ -105,14 +105,21 @@ const migrate = {
             return queries;
         },
         compareDown:function(){
+            let present = {};
             Object.keys(this.knownModels).forEach((model)=>{
+
                 Object.keys(this.knownTables).forEach((table)=>{
                     if(table.indexOf(model) !== -1){
-                        // does table exist?
+                        present[table] = true;
                         if(typeof this.knownModels[model][table] === 'undefined'){
                             this.knownModels[model][table] = {};
                         }
                         this.knownModels[model][table] = this.knownTables[table];
+                    }
+                });
+                Object.keys(this.knownModels[model]).forEach((modelTable)=>{
+                    if(typeof present[modelTable] === 'undefined'){
+                        delete this.knownModels[model][modelTable];
                     }
                 })
             })
