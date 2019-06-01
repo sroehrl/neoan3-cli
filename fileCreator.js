@@ -34,13 +34,11 @@ let fileCreator = {
     component: function (name, cType, answer) {
         if (this.create('component', name)) {
             this.php.namespace('Components');
-            this.php.use('Core\\Unicore');
-            if (cType === 'api') {
-                this.php.use('Frame\\' + this.fucase(answer.frame));
-            }
-            this.php.class(name, 'Unicore');
+
             switch (cType) {
                 case 'route':
+                    this.php.use('Core\\Unicore');
+                    this.php.class(name, 'Unicore');
                     let inner = "$this->uni()->";
                     if (answer.frame) {
                         inner = "$this->uni('" + answer.frame + "')->";
@@ -52,10 +50,14 @@ let fileCreator = {
                     this.php.classFunction('init', inner + "output();");
                     break;
                 case 'api':
+                    this.php.use('Frame\\' + this.fucase(answer.frame));
+                    this.php.class(name, this.fucase(answer.frame));
                     this.php.classFunction('get' + this.fucase(name), "", "$obj");
                     this.php.classFunction('post' + this.fucase(name), "", "$obj");
                     break;
                 case 'custom':
+                    this.php.use('Core\\Unicore');
+                    this.php.class(name, 'Unicore');
                     this.ce.writeJs(name);
                     break;
             }
