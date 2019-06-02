@@ -5,12 +5,13 @@ const add = require('./add');
 const download = require('download-git-repo');
 const execute = require('child_process').execSync;
 const migrate = require('./migrate');
+const publish = require('./publish');
 let concr = {
     getCurrentVersion:function(){
         let pack = JSON.parse(fs.readFileSync(__dirname+'/package.json','utf8'));
         return pack.version;
     },
-    executer: function (cmd, type, name) {
+    executer: function (cmd, type, name, extra) {
         if (typeof cmd !== 'undefined') {
             switch (cmd) {
                 case 'new':
@@ -30,12 +31,13 @@ let concr = {
                     console.log('Please refer to https://github.com/sroehrl/neoan3 for help. Currently, neoan3-cli has very limited possibilities.');
                     break;
                 case 'add':
-                    if (typeof type == 'undefined') {
+                    if (typeof type === 'undefined' || !['component','model','frame'].includes(type)) {
                         concr.error('Possible entities are "add component [repo]", "add model [repo]", "add frame [repo]"')
                     }
-                    add.processInput(name, type);
+                    add.processInput(name, type, extra);
                     break;
                 case 'migrate': migrate.init(type, name); break;
+                case 'publish': publish.init(type, name); break;
                 default:
                     concr.error();
             }

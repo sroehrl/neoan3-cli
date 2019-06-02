@@ -42,7 +42,7 @@ This command generates a new frame.
 This command creates a new model.
 
 ## add
-`neoan3 add [destination] [package]`
+`neoan3 add [destination] [package] ([repository-endpoint])`
 
 Adding components makes the following assumptions:
 -  the component is registered as a composer-package
@@ -54,6 +54,17 @@ for all other packages, please use the respective package manager (e.g. composer
 _example_
 
 `neoan3 add frame neoan3-frame/kit`
+
+You can also add the repository-endpoint parameter if you have private repositories or want to work without publishing to packagist.
+Please include the full url in these cases.
+>_works with bitbucket & github_
+
+_example_
+
+`neoan3 add model custom-model/products https://github.com/yourName/yourPackage.git`
+
+Please not that the name (here: custom-model/products) must be the name of specified in your composer.json of the neoan3-entity.
+See [publish](#publish).
 
 ## migrate
 
@@ -90,3 +101,23 @@ The recommended way for neoan3 is to follow a snake_case naming for tables and c
 
 This creates or alters tables in your connected database based on structural declarations present in your migrate.json files in the folder of models.
 It is important to know that removing a column in your declaration will NOT remove the column from the database, while adding a column will generate the column in your database.
+
+## publish
+
+`publish [entity-type] [entity-name]`
+
+_example_
+
+`publish model user`
+
+The publish-command transform a local neoan3 entity into a composer package. Dependencies are taken care of automatically.
+The command will also ask you whether you directly want to publish on github. To do so, please ensure:
+
+- you have git installed
+- you have registered you identity (config)
+- you have a valid token for the intended username
+- create a remote repository (e.g. via github.com)
+
+Please refer to Git documentation in order to achieve the above.
+
+Since you have a valid composer.json in your repository now, you may publish on packagist as well.

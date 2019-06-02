@@ -182,14 +182,14 @@ let fileCreator = {
             }
         },
         version: function (type, name) {
-            fs.appendFile(dir + type + '/' + name.toLowerCase() + '/version.json', fileCreator.versionJson(name), function (err) {
+            fs.appendFile(dir + type + '/' + name.toLowerCase() + '/version.json', fileCreator.versionJson(name,type), function (err) {
                 if (err) throw err;
             });
         }
     },
-    versionJson: function (name) {
-        let json = {"version": "0.0.1", "name": name};
-        return JSON.stringify(json);
+    versionJson: function (name,type) {
+        let json = {"version": "0.0.1", "name": name,"type":type};
+        return JSON.stringify(json, null, 4);
     },
 };
 module.exports = fileCreator;

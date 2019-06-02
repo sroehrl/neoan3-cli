@@ -249,7 +249,7 @@ const migrate = {
 
                 ];
                 inquirer.prompt(questions).then(function(answer){
-                    fs.appendFile(__dirname+'/userVars.json',JSON.stringify(answer),function(err){
+                    fs.appendFile(__dirname+'/userVars.json',JSON.stringify(answer, null, 4),function(err){
                         if (err) throw err;
                         resolve(answer);
                     });

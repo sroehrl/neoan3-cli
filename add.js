@@ -9,7 +9,7 @@ let Add = {
         this.splitNameString(nameStr);
     },
 
-    processInput(input,type){
+    processInput(input,type,extra){
         this.init(input);
         if(typeof this.composerJson.require[this.name] !== 'undefined'){
             console.log('Cannot overwrite existing declaration. Please manually inspect composer.json');
@@ -17,9 +17,20 @@ let Add = {
         }
         this.composerJson.require[this.name] = this.version;
         this.composerJson.extra['installer-paths']['./'+type+'/{$name}'].push(this.name.toString());
-        // console.log(this.composerJson);
+        if(typeof extra !== 'undefined'){
+            this.addCustomRepo(extra);
+        }
         this.writeComposerJson();
         this.executeComposer();
+    },
+    addCustomRepo(location){
+        if(typeof this.composerJson.repositories === 'undefined'){
+            this.composerJson.repositories = [];
+        }
+        this.composerJson.repositories.push({
+            type:'vcs',
+            url:location
+        })
     },
     splitNameString:function(str){
         let parts = str.split(':');
@@ -46,7 +57,7 @@ let Add = {
     },
     writeComposerJson:function(){
 
-        fs.writeFileSync('./composer.json',JSON.stringify(this.composerJson),function(err,outd){
+        fs.writeFileSync('./composer.json',JSON.stringify(this.composerJson, null, 4),function(err,outd){
             if(err){
                 throw new Error(err);
             }
