@@ -25,10 +25,14 @@ const migrate = {
         }
     },
     flush:function(){
-        fs.unlink(__dirname+'/userVars.json',(err)=>{
-            if(err) throw err;
-            console.log('credentials flushed');
-        });
+        if(!fs.existsSync(__dirname+'/userVars.json')){
+            console.log('Nothing to flush');
+        } else {
+            fs.unlink(__dirname+'/userVars.json',(err)=>{
+                if(err) throw err;
+                console.log('credentials flushed');
+            });
+        }
     },
     models:function(direction){
         this.ensure().then((credentials)=>{
