@@ -21,24 +21,36 @@ let Add = {
         this.composerJson.extra['installer-paths']['./'+type+'/{$name}'].push(this.name.toString());
         if(typeof extra !== 'undefined'){
             let parts = extra.split('/');
-            let repo = parts[parts.length-2]+'/'+parts[parts.length-1];
+            let lastParts = parts[parts.length-1].split('.');
+            let last ='';
+            lastParts.forEach((part,i)=>{
+                if(i<lastParts.length-1){
+                    last += part + '.'
+                }
+            });
+            last = last.substring(0,last.length-1);
+            let repo = parts[parts.length-2]+'/'+last;
+            console.log(repo);
             // custom repo
-            let exists = await calls.get('https://api.github.com/repos/'+repo);
-            if(typeof exists.error !== 'undefined'){
+            let exists = await calls.get('api.github.com','/repos/'+repo);
+
+            if(typeof exists.error !== 'undefined' || exists.message === 'Not Found'){
                 let msg = 'neoan3 was unable to find this repository. '+"\n";
                 msg += 'It is possible that this repository is private. Do you want to proceed?';
                 let answer = await  inquirer.prompt({name:'anyway',type:'confirm',message:msg});
                 if(!answer.anyway){
                     process.exit();
                 }
+            } else {
+                console.log(exists);
             }
             this.addCustomRepo(extra);
         } else {
-            let exists = await calls.get('https://packagist.org/search.json?q='+this.name);
+            let exists = await calls.get('packagist.org','/search.json?q='+this.name);
             if(exists.total!==1){
                 console.log('Package "%s" does not exist or is ambiguous. If your package is not registered with packagist, add the GitHub-path to your command.',this.name);
+                process.exit(1);
             }
-            process.exit(1);
         }
         this.writeComposerJson();
         this.executeComposer();
