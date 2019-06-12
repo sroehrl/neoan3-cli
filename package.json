@@ -1,7 +1,11 @@
 {
   "name": "neoan3-cli",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "description": "neoan3 cli helper",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/sroehrl/neoan3-cli.git"
+  },
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

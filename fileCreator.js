@@ -1,11 +1,18 @@
 const fs = require('fs');
 let dir = './';
 let fileCreator = {
-    create: function (type, name) {
+    create: function (type, name, specify) {
         if (this.directoryManager.folder(type, this.flcase(name))) {
-            this.directoryManager.version(type, this.flcase(name));
+            this.directoryManager.version(type, this.flcase(name),specify);
             console.log('writing...');
             return true;
+        } else if(typeof specify !== 'undefined' && specify === 'custom'){
+            if(this.modifyVersion(name,type)){
+                console.log('writing...');
+                return true;
+            } else {
+                console.log('Uh, I am afraid to overwrite important stuff. Please proceed manually.');
+            }
         }
         return false;
     },
@@ -32,7 +39,8 @@ let fileCreator = {
         }
     },
     component: function (name, cType, answer) {
-        if (this.create('component', name)) {
+        if (this.create('component', name, cType)) {
+            let propagatePHP = true;
             this.php.namespace('Components');
 
             switch (cType) {
@@ -56,13 +64,14 @@ let fileCreator = {
                     this.php.classFunction('post' + this.fucase(name), "", "$obj");
                     break;
                 case 'custom':
-                    this.php.use('Core\\Unicore');
-                    this.php.class(name, 'Unicore');
+                    propagatePHP = false;
                     this.ce.writeJs(name);
                     break;
             }
             this.php.closingCurly();
-            this.writeToFile(name, 'component');
+            if(propagatePHP){
+                this.writeToFile(name, 'component');
+            }
         }
 
     },
@@ -177,17 +186,31 @@ let fileCreator = {
                 fs.mkdirSync(dir + type + '/' + name);
                 return true;
             } else {
-                console.log('%s %s already exists', type, name);
+                console.log('Notice: %s %s already exists', type, name);
                 return false;
             }
         },
-        version: function (type, name) {
-            fs.appendFile(dir + type + '/' + name.toLowerCase() + '/version.json', fileCreator.versionJson(name,type), function (err) {
+        version: function (type, name, specify) {
+            fs.appendFile(dir + type + '/' + name.toLowerCase() + '/version.json', fileCreator.versionJson(name,type,specify), function (err) {
                 if (err) throw err;
             });
         }
     },
-    versionJson: function (name,type) {
+    modifyVersion: function(name,type){
+        let version = JSON.parse(fs.readFileSync(dir + type + '/' + name.toLowerCase() + '/version.json','utf8'));
+        if(typeof version.type !== 'undefined' && version.type === 'hybrid'){
+            return false;
+        }
+        version.type = 'hybrid';
+        fs.writeFile(dir + type + '/' + name.toLowerCase() + '/version.json', JSON.stringify(version, null, 4), function (err) {
+            if (err) throw err;
+        });
+        return true;
+    },
+    versionJson: function (name,type,specify) {
+        if(typeof specify !== 'undefined'){
+            type = specify;
+        }
         let json = {"version": "0.0.1", "name": name,"type":type};
         return JSON.stringify(json, null, 4);
     },
