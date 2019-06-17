@@ -250,7 +250,6 @@ const migrate = {
                     {name:'password',type:'password',message:'db password',when:function(answers){
                         return answers.savePw;
                         }}
-
                 ];
                 inquirer.prompt(questions).then(function(answer){
                     fs.appendFile(__dirname+'/userVars.json',JSON.stringify(answer, null, 4),function(err){

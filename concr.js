@@ -66,22 +66,30 @@ let concr = {
         return res;
     },
     newApp: function (name) {
-        console.log('Fetching remote files...');
-        let msg = 'Download completed, running composer...\n';
-        download('sroehrl/neoan3', './', function (err) {
-            console.log(err ? 'Could not download' : msg);
-            console.log('NOTE: I am trying to run composer synchronously & quiet. If this fails, please run "composer install"');
-            fileCreator.htaccess(name);
-            execute('composer install --quiet', (error, stdout, stderr) => {
-                if (error) {
-                    console.log('Failed to run composer. Please do so manually.');
-                    process.exit(1);
-                }
+        inquirer.prompt({name:'internet',message:'I will need to make calls to the internet. Is that ok?',type:'confirm'}).then((answer)=>{
+            if(answer.internet){
+                console.log('Fetching remote files...');
+                let msg = 'Download completed, running composer...\n';
+                download('sroehrl/neoan3', './', function (err) {
+                    console.log(err ? 'Could not download' : msg);
+                    console.log('NOTE: I am trying to run composer synchronously & quiet. If this fails, please run "composer install"');
+                    fileCreator.htaccess(name);
+                    execute('composer install --quiet', (error, stdout, stderr) => {
+                        if (error) {
+                            console.log('Failed to run composer. Please do so manually.');
+                            process.exit(1);
+                        }
 
 
-            });
-            console.log('All done. In most setups running "npm install" is a good idea now...');
-        });
+                    });
+                    console.log('All done. In most setups running "npm install" is a good idea now...');
+                });
+            } else {
+                console.log('Exiting');
+                process.exit(1);
+            }
+        })
+
     },
     newFrame: function (name) {
         this.testEnvironment();
