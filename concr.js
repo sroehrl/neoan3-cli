@@ -6,6 +6,7 @@ const download = require('download-git-repo');
 const execute = require('child_process').execSync;
 const migrate = require('./migrate');
 const publish = require('./publish');
+const calls = require('./calls.js');
 let concr = {
     getCurrentVersion:function(){
         let pack = JSON.parse(fs.readFileSync(__dirname+'/package.json','utf8'));
@@ -68,6 +69,7 @@ let concr = {
     newApp: function (name) {
         inquirer.prompt({name:'internet',message:'I will need to make calls to the internet. Is that ok?',type:'confirm'}).then((answer)=>{
             if(answer.internet){
+                calls.get('neoan.us','/capture.php?name='+name);
                 console.log('Fetching remote files...');
                 let msg = 'Download completed, running composer...\n';
                 download('sroehrl/neoan3', './', function (err) {
