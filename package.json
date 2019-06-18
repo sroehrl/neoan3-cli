@@ -1,6 +1,6 @@
 {
   "name": "neoan3-cli",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "neoan3 cli helper",
   "repository": {
     "type" : "git",
