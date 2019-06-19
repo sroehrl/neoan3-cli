@@ -12,8 +12,19 @@ let concr = {
         let pack = JSON.parse(fs.readFileSync(__dirname+'/package.json','utf8'));
         return pack.version;
     },
-    executer: function (cmd, type, name, extra) {
+    executer: async function (cmd, type, name, extra) {
         if (typeof cmd !== 'undefined') {
+            let localVersion = concr.getCurrentVersion();
+            let onlineVersion = await calls.get('api.npms.io','/v2/search?q=neoan3-cli');
+            if(typeof onlineVersion.results !== 'undefined'){
+                if(localVersion !== onlineVersion.results[0].package.version){
+                    console.log('/**************');
+                    console.log('*');
+                    console.log('* neoan3-cli version '+onlineVersion.results[0].package.version+' available. Consider updating');
+                    console.log('*');
+                    console.log('**************/');
+                }
+            }
             switch (cmd) {
                 case 'new':
                     if (typeof type == 'undefined') {
