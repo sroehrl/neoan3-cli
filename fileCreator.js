@@ -6,13 +6,20 @@ let fileCreator = {
             this.directoryManager.version(type, this.flcase(name),specify);
             console.log('writing...');
             return true;
-        } else if(typeof specify !== 'undefined' && specify === 'custom'){
-            if(this.modifyVersion(name,type)){
-                console.log('writing...');
-                return true;
+        } else if(typeof specify !== 'undefined'){
+            console.log(dir + type + '/' + this.flcase(name)+'/'+this.fucase(name)+'.ctrl.php');
+            console.log(fs.existsSync(dir + type + '/' + this.flcase(name)+'/'+this.fucase(name)+'.ctrl.php'));
+            if(specify !== 'custom' && fs.existsSync(dir + type + '/' + this.flcase(name)+'/'+this.fucase(name)+'.ctrl.php')){
+                console.log('I don\'t dare to create such a hybrid. Please proceed manually.');
             } else {
-                console.log('Uh, I am afraid to overwrite important stuff. Please proceed manually.');
+                if(this.modifyVersion(name,type)){
+                    console.log('writing...');
+                    return true;
+                } else {
+                    console.log('Uh, I am afraid to overwrite important stuff. Please proceed manually.');
+                }
             }
+
         }
         return false;
     },
