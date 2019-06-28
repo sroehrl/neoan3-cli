@@ -7,8 +7,6 @@ let fileCreator = {
             console.log('writing...');
             return true;
         } else if(typeof specify !== 'undefined'){
-            console.log(dir + type + '/' + this.flcase(name)+'/'+this.fucase(name)+'.ctrl.php');
-            console.log(fs.existsSync(dir + type + '/' + this.flcase(name)+'/'+this.fucase(name)+'.ctrl.php'));
             if(specify !== 'custom' && fs.existsSync(dir + type + '/' + this.flcase(name)+'/'+this.fucase(name)+'.ctrl.php')){
                 console.log('I don\'t dare to create such a hybrid. Please proceed manually.');
             } else {
