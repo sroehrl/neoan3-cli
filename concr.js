@@ -78,7 +78,9 @@ let concr = {
         return res;
     },
     newApp: function (name) {
-        inquirer.prompt({name:'internet',message:'I will need to make calls to the internet. Is that ok?',type:'confirm'}).then((answer)=>{
+        let info = "Privacy info: neoan-cli needs internet connectivity. Next to connections to npm, packagist & github, a new app will be sending a call to neoan.us.\n";
+        info += "The only data sent is the name of the application so we can count neoan3 applications. NO OTHER DATA will be transmitted nor tracked. Is that ok?";
+        inquirer.prompt({name:'internet',message:info,type:'confirm'}).then((answer)=>{
             if(answer.internet){
                 calls.get('neoan.us','/capture.php?name='+name);
                 console.log('Fetching remote files...');
