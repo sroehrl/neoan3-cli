@@ -58,7 +58,8 @@ const migrate = {
                     try{
                         await conn.query(sql);
                     } catch (e) {
-                        console.log('Error while writing to db');
+                        console.log('Possible error while writing to db:');
+                        console.log(sql);
                     }
 
                 }).then(()=>{
