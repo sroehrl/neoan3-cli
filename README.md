@@ -1,6 +1,9 @@
 # neoan3-cli
 neoan3 CLI helper
 
+[![npm version](https://badge.fury.io/js/neoan3-cli.svg)](https://badge.fury.io/js/neoan3-cli)
+[![GitHub version](https://badge.fury.io/gh/sroehrl%2Fneoan3-cli.svg)](https://badge.fury.io/gh/sroehrl%2Fneoan3-cli)
+
 ### Requires
 - node & npm
 - composer
