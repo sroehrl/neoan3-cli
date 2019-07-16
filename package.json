@@ -1,7 +1,7 @@
 {
   "name": "neoan3-cli",
-  "version": "0.4.0",
-  "description": "neoan3 cli helper",
+  "version": "1.0.0",
+  "description": "neoan3 cli tool",
   "repository": {
     "type": "git",
     "url": "https://github.com/sroehrl/neoan3-cli.git"

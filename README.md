@@ -124,3 +124,13 @@ The command will also ask you whether you directly want to publish on github. To
 Please refer to Git documentation in order to achieve the above.
 
 Since you have a valid composer.json in your repository now, you may publish on packagist as well.
+
+# Collaborators wanted
+As of July 2019, over 1500 neoan3 applications are waiting for documentation. I'd love to have some people to help me:
+
+- document neoan3 (framework)
+- document neoan3-cli
+- document various neoan3 composer apps
+- create tutorials
+
+If you are interested, please fel free to get in touch @ https://github.com/sroehrl
