@@ -10,6 +10,20 @@ async function asyncLoop(array,callback) {
         await callback(array[index], index, array);
     }
 }
+async  function createCredentials(){
+    let questions = [
+        {name:'host',type:'input',message:'db host',default:'localhost'},
+        {name:'name',type:'input',message:'db name',default:'neoan'},
+        {name:'user',type:'input',message:'db user',default:'root'},
+        {name:'port',type:'input',message:'port',default:3306},
+        {name:'savePw',type:'confirm',message:'Save password?'},
+        {name:'password',type:'password',message:'db password',when:function(answers){
+                return answers.savePw;
+            }}
+    ];
+    return await inquirer.prompt(questions);
+
+}
 
 const migrate = {
 
@@ -20,6 +34,9 @@ const migrate = {
                 break;
             case 'models':
                 this.models(direction);
+                break;
+            case 'config':
+                this.ensure().then(x=>console.log(x));
                 break;
             default: console.log('unknown migration command');
         }
@@ -39,10 +56,10 @@ const migrate = {
             this.compare.getModelJsons();
             switch(direction){
                 case 'down':
-                    this.processDown(credentials);
+                    this.processDown(credentials.database);
                     break;
                 case 'up':
-                    this.processUp(credentials);
+                    this.processUp(credentials.database);
                     break;
                 default: console.log(direction+'? This command is unknown to me.');
             }
@@ -242,29 +259,33 @@ const migrate = {
         return new Promise(function(resolve,reject){
             if(!fs.existsSync(__dirname+'/userVars.json')){
                 console.log('Neoan3-cli has no saved credentials');
-                let questions = [
-                    {name:'host',type:'input',message:'db host',default:'localhost'},
-                    {name:'name',type:'input',message:'db name',default:'neoan'},
-                    {name:'user',type:'input',message:'db user',default:'root'},
-                    {name:'port',type:'input',message:'port',default:3306},
-                    {name:'savePw',type:'confirm',message:'Save password?'},
-                    {name:'password',type:'password',message:'db password',when:function(answers){
-                        return answers.savePw;
-                        }}
-                ];
-                inquirer.prompt(questions).then(function(answer){
-                    fs.appendFile(__dirname+'/userVars.json',JSON.stringify(answer, null, 4),function(err){
+                createCredentials().then((answer)=>{
+                    let userVars = {
+                        database:answer
+                    };
+                    fs.appendFile(__dirname+'/userVars.json',JSON.stringify(userVars, null, 4),function(err){
                         if (err) throw err;
                         resolve(answer);
                     });
-
                 });
             } else {
+                let credentials = JSON.parse(fs.readFileSync(__dirname+'/userVars.json','utf8'));
+                if(typeof credentials.database === 'undefined'){
 
-                resolve(JSON.parse(fs.readFileSync(__dirname+'/userVars.json','utf8')));
+                    createCredentials().then(answer=>{
+                        credentials.database = answer;
+                        fs.writeFile(__dirname+'/userVars.json',JSON.stringify(credentials, null, 4),function(err){
+                            if (err) throw err;
+                            resolve(credentials);
+                        });
+                    })
+                }
+
+                resolve(credentials);
             }
         })
 
-    }
+    },
+
 };
 module.exports = migrate;

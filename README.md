@@ -88,6 +88,11 @@ When working with version control branches, the following workflow is recommende
 - after checking out a branch, _migrate up_ 
 
 The migration is highly simplified and works in two directions.
+### config
+`neoan3 migrate config`
+
+Displays current local database settings. If no settings are present, the creation process starts.
+
 ### migrate down
 
 `neoan3 migrate models down`
