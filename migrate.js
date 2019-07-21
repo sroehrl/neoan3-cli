@@ -279,9 +279,20 @@ const migrate = {
                             resolve(credentials);
                         });
                     })
+                } else {
+                    inquirer.prompt([{name:'proceed',type:'confirm',message:'Selected database is '+credentials.database.nodeName+'. OK?'}]).then(answer=>{
+                        if(answer.proceed){
+                            resolve(credentials);
+                        } else {
+                            console.log('Exiting...');
+                            console.log('Run "neoan3 migrate flush" to reset credentials ');
+                            process.exit(1);
+                        }
+                    })
+
                 }
 
-                resolve(credentials);
+
             }
         })
 
