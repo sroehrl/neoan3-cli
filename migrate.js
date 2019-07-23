@@ -280,7 +280,7 @@ const migrate = {
                         });
                     })
                 } else {
-                    inquirer.prompt([{name:'proceed',type:'confirm',message:'Selected database is '+credentials.database.nodeName+'. OK?'}]).then(answer=>{
+                    inquirer.prompt([{name:'proceed',type:'confirm',message:'Selected database is '+credentials.database.name+'. OK?'}]).then(answer=>{
                         if(answer.proceed){
                             resolve(credentials);
                         } else {
