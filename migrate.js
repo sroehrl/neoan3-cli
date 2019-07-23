@@ -265,7 +265,7 @@ const migrate = {
                     };
                     fs.appendFile(__dirname+'/userVars.json',JSON.stringify(userVars, null, 4),function(err){
                         if (err) throw err;
-                        resolve(answer);
+                        resolve({database:answer});
                     });
                 });
             } else {
