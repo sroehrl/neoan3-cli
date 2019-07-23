@@ -4,6 +4,17 @@ neoan3 CLI helper
 [![npm version](https://badge.fury.io/js/neoan3-cli.svg)](https://badge.fury.io/js/neoan3-cli)
 [![GitHub version](https://badge.fury.io/gh/sroehrl%2Fneoan3-cli.svg)](https://badge.fury.io/gh/sroehrl%2Fneoan3-cli)
 
+## Automate your [neoan3](https://github.com/sroehrl/neoan3) needs
+
+Official neoan3 cli tool for
+
+- application creation
+- model creation
+- model migration
+- model packaging & publishing
+- component creation
+- component packaging & publishing
+
 ### Requires
 - node & npm
 - composer
