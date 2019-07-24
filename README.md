@@ -135,7 +135,7 @@ The command will also ask you whether you directly want to publish on github. To
 - you have git installed
 - you have registered you identity (config)
 - you have a valid token for the intended username
-- create a remote repository (e.g. via github.com)
+- created a remote repository (e.g. via github.com)
 
 Please refer to Git documentation in order to achieve the above.
 
