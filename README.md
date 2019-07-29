@@ -141,6 +141,10 @@ Please refer to Git documentation in order to achieve the above.
 
 Since you have a valid composer.json in your repository now, you may publish on packagist as well.
 
+# Reporting issues
+
+The GitHub repo [neoan3-cli](https://github.com/sroehrl/neoan3-cli) is actively maintained. Please report issues there.
+
 # Collaborators wanted
 As of July 2019, over 1500 neoan3 applications are waiting for documentation. I'd love to have some people to help me:
 
