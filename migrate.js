@@ -131,7 +131,7 @@ const migrate = {
             Object.keys(this.knownModels).forEach((model)=>{
 
                 Object.keys(this.knownTables).forEach((table)=>{
-                    if(table.indexOf(model) !== -1){
+                    if(table.startsWith(model)){
                         present[table] = true;
                         if(typeof this.knownModels[model][table] === 'undefined'){
                             this.knownModels[model][table] = {};
