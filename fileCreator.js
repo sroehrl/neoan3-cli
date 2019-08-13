@@ -65,8 +65,8 @@ let fileCreator = {
                 case 'api':
                     this.php.use('Frame\\' + this.fucase(answer.frame));
                     this.php.class(name, this.fucase(answer.frame));
-                    this.php.classFunction('get' + this.fucase(name), "", "$obj");
-                    this.php.classFunction('post' + this.fucase(name), "", "$obj");
+                    this.php.classFunction('get' + this.fucase(name), "", "array $body");
+                    this.php.classFunction('post' + this.fucase(name), "", "array $body");
                     break;
                 case 'custom':
                     propagatePHP = false;
@@ -113,7 +113,7 @@ let fileCreator = {
             if (typeof extend !== 'undefined') {
                 this.fileString += " extends " + fileCreator.fucase(extend);
             }
-            this.fileString += " {\n";
+            this.fileString += "\n{\n";
         },
         classFunction: function (name, inner, arg, typus = 'public') {
             this.init();
@@ -131,11 +131,13 @@ let fileCreator = {
         },
         staticFunction: function (fname, arg) {
             this.init();
-            this.fileString += "static function " + fname + "(" + (arg ? arg : '') + "){\n";
+            this.fileString += "static function " + fname + "(" + (arg ? arg : '') + ")\n";
+            this.fileString += "    {\n";
         },
         publicFunction: function (fname, arg) {
             this.init();
-            this.fileString += "function " + fname + "(" + (arg ? arg : '') + "){\n";
+            this.fileString += "function " + fname + "(" + (arg ? arg : '') + ")\n";
+            this.fileString += "    {\n";
         },
         closingCurly: function () {
             this.fileString += "}\n";
