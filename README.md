@@ -77,7 +77,7 @@ _example_
 
 `neoan3 add model custom-model/products https://github.com/yourName/yourPackage.git`
 
-Please not that the name (here: custom-model/products) must be the name of specified in your composer.json of the neoan3-entity.
+Please note that the name (here: custom-model/products) must be the name of specified in your composer.json of the neoan3-entity.
 See [publish](#publish).
 
 ## credentials
@@ -147,7 +147,7 @@ _example_
 
 `publish model user`
 
-The publish-command transform a local neoan3 entity into a composer package. Dependencies are taken care of automatically.
+The publish-command transforms a local neoan3 entity into a composer package. Dependencies are taken care of automatically.
 The command will also ask you whether you directly want to publish on github. To do so, please ensure:
 
 - you have git installed
