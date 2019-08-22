@@ -164,7 +164,7 @@ Since you have a valid composer.json in your repository now, you may publish on 
 The GitHub repo [neoan3-cli](https://github.com/sroehrl/neoan3-cli) is actively maintained. Please report issues there.
 
 # Collaborators wanted
-As of July 2019, over 1500 neoan3 applications are waiting for documentation. I'd love to have some people to help me:
+As of August 2019, over 2500 neoan3 applications are waiting for documentation. I'd love to have some people to help me:
 
 - document neoan3 (framework)
 - document neoan3-cli
