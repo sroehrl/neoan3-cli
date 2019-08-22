@@ -80,6 +80,22 @@ _example_
 Please not that the name (here: custom-model/products) must be the name of specified in your composer.json of the neoan3-entity.
 See [publish](#publish).
 
+## credentials
+
+It is recommended to store static credentials (like smtp, API-tokens etc) outside the web root. 
+This command attempts to mange such credentials in a folder "credentials" (sibling to web root) and a file credentials.json
+
+`neoan3 credentials` 
+
+In its most simplistic form, a neoan3 implementation could look like this (in a frame):
+```PHP
+$credentialFile = dirname(dirname(path)) . '/credentials/credentials.json';
+if(file_exists($credentialFile)) {
+    $this->credentials = json_decode(file_get_contents($credentialFile), true);
+}
+```
+
+
 ## migrate
 
 Currently supports SQL only. 
@@ -87,11 +103,13 @@ Currently supports SQL only.
 `neoan3 migrate models [direction]` 
 
 _Credentials_: 
-The tool will memorize your credentials (including your password, if confirmed by the user).
+The tool will memorize your db-credentials (including your password, if confirmed by the user).
 When switching between multiple projects or databases, you may want to flush these credentials.
 The tool will suggest you to do so if a connection cannot be established, but **you** have to understand the implications
 of working with potentially wrong but valid credentials. Therefore, when working with multiple databases or projects,
-the command `neoan3 migrate flush` is recommended.
+the command `neoan3 migrate flush` is recommended. 
+
+NOTE: These credentials are held by neoan3 directly. This does not assume nor require credentials set by [credentials](#credentials)
 
 When working with version control branches, the following workflow is recommended:
 

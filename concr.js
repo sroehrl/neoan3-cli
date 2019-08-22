@@ -7,6 +7,7 @@ const execute = require('child_process').execSync;
 const migrate = require('./migrate');
 const publish = require('./publish');
 const calls = require('./calls.js');
+const credentials = require('./credentials.js');
 let concr = {
     getCurrentVersion:function(){
         let pack = JSON.parse(fs.readFileSync(__dirname+'/package.json','utf8'));
@@ -62,6 +63,7 @@ let concr = {
                     break;
                 case 'migrate': migrate.init(type, name); break;
                 case 'publish': publish.init(type, name); break;
+                case 'credentials': credentials.init(type, name); break;
                 default:
                     concr.error();
             }
