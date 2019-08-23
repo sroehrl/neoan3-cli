@@ -46,6 +46,10 @@ This command will guide you through the creation of a new component, prefilling 
 - route (generates init-functions resulting in the component acting as a valid route)
 - custom element (currently empty class)
 
+*NOTE:* You can influence the generated output with templates. To do so, place a folder _template in your project.
+Currently the files _ce.js_ (generated when creating custom elements) and _view.html_ (generated when selecting route components with views)
+are respected. You can use the variable {{name}}.
+
 ### new frame
 `neoan3 new frame [frame-name]`
 
