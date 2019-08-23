@@ -1,4 +1,4 @@
-const fs = require('fs');
+const fs = require('fs-extra');
 let dir = './';
 let fileCreator = {
     create: function (type, name, specify) {
@@ -80,10 +80,22 @@ let fileCreator = {
         }
 
     },
+    template:function(file){
+        if(fs.existsSync(dir+'_template/'+file)){
+            console.log('using template...');
+            return fs.readFileSync(dir+'_template/'+file,'utf8');
+        }
+        return false;
+    },
     ce: {
-        fileString:'',
+        fileString: function(){ return fileCreator.template('ce.js')},
         writeJs: function (name) {
-            fs.appendFile(dir + 'component/' + fileCreator.flcase(name) + '/' + fileCreator.flcase(name) +'.ce.js', this.fileString, function (err) {
+            let content = this.fileString();
+            if(!content){
+                content = '';
+            }
+            content = content.replace('{{name}}',name);
+            fs.appendFile(dir + 'component/' + fileCreator.flcase(name) + '/' + fileCreator.flcase(name) +'.ce.js', content, function (err) {
                 if (err) throw err;
             });
         }
@@ -144,7 +156,12 @@ let fileCreator = {
         }
     },
     htmlView: function (name) {
-        fs.writeFile(dir + 'component/' + this.flcase(name) + '/' + this.flcase(name) + '.view.html', '<h1>' + name + '</h1>', function (err, outd) {
+        let content = this.template('view.html');
+        if(!content){ content = '<h1>{{name}}</h1>'};
+
+        content = content.replace('{{name}}',name);
+
+        fs.writeFile(dir + 'component/' + this.flcase(name) + '/' + this.flcase(name) + '.view.html', content, function (err, outd) {
             if (err) {
                 throw new Error(err);
             }
