@@ -1,5 +1,6 @@
 const fs = require('fs-extra');
 let dir = './';
+let fileEndings = ['php','html','js'];
 let fileCreator = {
     create: function (type, name, specify) {
         if (this.directoryManager.folder(type, this.flcase(name))) {
@@ -23,20 +24,30 @@ let fileCreator = {
     },
     frame: function (name) {
         if (this.create('frame', name)) {
-            this.php.namespace('Frame');
-            this.php.use('Core\\Serve');
-            this.php.class(name, 'Serve');
-            this.php.closingCurly();
+            let template = this.template('frame');
+            if(typeof template.php !== 'undefined'){
+                this.php.fileString = template.php.replace('{{name}}',name);
+            } else{
+                this.php.namespace('Frame');
+                this.php.use('Core\\Serve');
+                this.php.class(name, 'Serve');
+                this.php.closingCurly();
+            }
             this.writeToFile(name, 'frame');
         }
     },
     model: function (name) {
         if (this.create('model', name)) {
-            this.php.namespace('Model');
-            this.php.class(name+'Model', 'IndexModel');
-            this.php.classFunction('byId', '', '$id', 'static');
-            this.php.classFunction('find', '', '$condition', 'static');
-            this.php.closingCurly();
+            let template = this.template('model');
+            if(typeof template.php !== 'undefined'){
+                this.php.fileString = template.php.replace('{{name}}',name+'Model');
+            } else {
+                this.php.namespace('Model');
+                this.php.class(name+'Model', 'IndexModel');
+                this.php.classFunction('byId', '', '$id', 'static');
+                this.php.classFunction('find', '', '$condition', 'static');
+                this.php.closingCurly();
+            }
             this.writeToFile(name, 'model');
             fs.appendFile(dir + '/model/' + this.flcase(name) + '/migrate.json', '{}', function (err) {
                 if (err) throw err;
@@ -45,11 +56,13 @@ let fileCreator = {
     },
     component: function (name, cType, answer) {
         if (this.create('component', name, cType)) {
-            let propagatePHP = true;
+            let template = {}, propagatePHP = true;
             this.php.namespace('Components');
 
             switch (cType) {
                 case 'route':
+                    template = this.template('route');
+
                     this.php.use('Core\\Unicore');
                     this.php.class(name, 'Unicore');
                     let inner = "$this->uni()->";
@@ -61,42 +74,72 @@ let fileCreator = {
                         inner += "hook('main','" + this.flcase(name) + "')->";
                     }
                     this.php.classFunction('init', inner + "output();");
+                    this.php.closingCurly();
+                    if(typeof template.php !== 'undefined'){
+                        this.php.fileString = template.php
+                            .replace('{{name}}',this.fucase(name));
+                        if (answer.frame) {
+                            this.php.fileString = this.php.fileString.replace('{{frame}}',this.fucase(answer.frame))
+                        }
+                    }
                     break;
                 case 'api':
+                    template = this.template('api');
                     this.php.use('Frame\\' + this.fucase(answer.frame));
                     this.php.class(name, this.fucase(answer.frame));
                     this.php.classFunction('get' + this.fucase(name), "", "array $body");
                     this.php.classFunction('post' + this.fucase(name), "", "array $body");
+                    this.php.closingCurly();
+                    if(typeof template.php !== 'undefined'){
+                        this.php.fileString = template.php
+                            .replace('{{name}}',this.fucase(name))
+                            .replace('{{frame}}',this.fucase(answer.frame));
+                    }
                     break;
                 case 'custom':
                     propagatePHP = false;
-                    this.ce.writeJs(name);
+                    this.ce.write(name);
                     break;
             }
-            this.php.closingCurly();
+
             if(propagatePHP){
                 this.writeToFile(name, 'component');
             }
         }
 
     },
-    template:function(file){
-        if(fs.existsSync(dir+'_template/'+file)){
-            console.log('using template...');
-            return fs.readFileSync(dir+'_template/'+file,'utf8');
-        }
-        return false;
+    template:function(fileType){
+        let file, templates = {};
+        fileEndings.forEach(fileEnding =>{
+            file = dir + '_template/' + fileType + '.' + fileEnding;
+            if(fs.existsSync(file)){
+                console.log('using %s-template...', fileEnding);
+                templates[fileEnding] = fs.readFileSync(file,'utf8');
+            }
+        });
+        return templates;
     },
     ce: {
-        fileString: function(){ return fileCreator.template('ce.js')},
-        writeJs: function (name) {
-            let content = this.fileString();
-            if(!content){
-                content = '';
-            }
-            content = content.replace('{{name}}',name);
-            fs.appendFile(dir + 'component/' + fileCreator.flcase(name) + '/' + fileCreator.flcase(name) +'.ce.js', content, function (err) {
-                if (err) throw err;
+        getTemplates: function(){
+            return fileCreator.template('ce')
+        },
+        write: function (name) {
+            let content = '', identifier = '.ce.', templates = this.getTemplates();
+            let targetFolder = dir + 'component/' + fileCreator.flcase(name) + '/';
+            fileEndings.forEach(fileEnding =>{
+                if(typeof templates[fileEnding] === 'undefined' && fileEnding === 'js'){
+                    fs.appendFile(targetFolder + fileCreator.flcase(name) +'.ce.js', '', function (err) {
+                        if (err) throw err;
+                    });
+                } else if(typeof templates[fileEnding] !== 'undefined'){
+                    content = templates[fileEnding].replace('{{name}}',name);
+                    if(fileEnding === 'php'){
+                        identifier = '.ctrl.';
+                    }
+                    fs.appendFile(targetFolder + fileCreator.flcase(name) + identifier +fileEnding, content, function (err) {
+                        if (err) throw err;
+                    });
+                }
             });
         }
     },
@@ -156,8 +199,10 @@ let fileCreator = {
         }
     },
     htmlView: function (name) {
-        let content = this.template('view.html');
-        if(!content){ content = '<h1>{{name}}</h1>'};
+        let content = '<h1>{{name}}</h1>', template = this.template('view');
+        if(typeof template.html !== 'undefined'){
+            content = template.html;
+        }
 
         content = content.replace('{{name}}',name);
 

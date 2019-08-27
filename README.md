@@ -46,9 +46,6 @@ This command will guide you through the creation of a new component, prefilling 
 - route (generates init-functions resulting in the component acting as a valid route)
 - custom element (currently empty class)
 
-*NOTE:* You can influence the generated output with templates. To do so, place a folder _template in your project.
-Currently the files _ce.js_ (generated when creating custom elements) and _view.html_ (generated when selecting route components with views)
-are respected. You can use the variable {{name}}.
 
 ### new frame
 `neoan3 new frame [frame-name]`
@@ -162,6 +159,22 @@ The command will also ask you whether you directly want to publish on github. To
 Please refer to Git documentation in order to achieve the above.
 
 Since you have a valid composer.json in your repository now, you may publish on packagist as well.
+
+## Templates
+You can influence the generated output with templates. To do so, place a folder _template in your project.
+Basic variable support works with double curly braces without spaces ( {{example}} )
+The following files are respected:
+
+| template file | entity | variable(s) | Note |
+| --- | --- | --- | --- |
+| api.php | component (API) | name , frame ||
+| route.php | component (Route) | name , frame ||
+| view.html | component (Route) | name  ||
+| ce.php | Custom element | name  | *PHP files for custom element is only generated if template is present |
+| ce.js | Custom element | name | |
+| ce.html | Custom element | name | |
+
+
 
 # Reporting issues
 
