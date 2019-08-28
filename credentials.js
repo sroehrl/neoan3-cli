@@ -14,7 +14,7 @@ let CredentialHandler = {
         });
         let credentialObj = fs.existsSync(credentialsFolder +'/credentials.json');
         if(credentialObj){
-            this.credentialObj = fs.readJsonSync(credentialsFolder +'/credentials.json');
+            CredentialHandler.credentialObj = fs.readJsonSync(credentialsFolder +'/credentials.json');
         }
         let options = ['create new'];
         Object.keys(CredentialHandler.credentialObj).forEach(topic=>{
