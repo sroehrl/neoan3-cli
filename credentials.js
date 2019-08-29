@@ -59,6 +59,12 @@ let CredentialHandler = {
             {type:'input',name:'value',message:'Enter value',when:(answer)=>{return answer.choice.startsWith('modify') || answer.choice === 'create new'}},
         ];
         inquirer.prompt(questions).then(res=>{
+            // modify boolean or number
+            if(!isNaN(res.value)){
+                res.value = +res.value;
+            } else {
+                res.value = (res.value === 'true' ? true : (res.value === 'false' ? false : res.value));
+            }
             if(res.choice.startsWith('modify')){
                 CredentialHandler.credentialObj[topic][res.choice.substring('modify '.length)] = res.value;
                 CredentialHandler.display(topic);
