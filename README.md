@@ -4,7 +4,7 @@ neoan3 CLI helper
 [![npm version](https://badge.fury.io/js/neoan3-cli.svg)](https://badge.fury.io/js/neoan3-cli)
 [![GitHub version](https://badge.fury.io/gh/sroehrl%2Fneoan3-cli.svg)](https://badge.fury.io/gh/sroehrl%2Fneoan3-cli)
 
-## Automate your [neoan3](https://github.com/sroehrl/neoan3) needs
+## Automate your [neoan3](https://github.com/sroehrl/neoan3) needs ([documentation](http://neoan.us/neoan3docs/getting-started/))
 
 Official neoan3 cli tool for
 
@@ -181,7 +181,7 @@ The following files are respected:
 The GitHub repo [neoan3-cli](https://github.com/sroehrl/neoan3-cli) is actively maintained. Please report issues there.
 
 # Collaborators wanted
-As of August 2019, over 2500 neoan3 applications are waiting for documentation. I'd love to have some people to help me:
+As of September 2019, over 4000 neoan3 applications are waiting for documentation. I'd love to have some people to help me:
 
 - document neoan3 (framework)
 - document neoan3-cli
