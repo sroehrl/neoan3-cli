@@ -16,10 +16,14 @@ let CredentialHandler = {
         if(credentialObj){
             CredentialHandler.credentialObj = fs.readJsonSync(credentialsFolder +'/credentials.json');
         }
-        let options = ['create new'];
+        CredentialHandler.topLevel();
+    },
+    topLevel:()=>{
+        let options = [];
         Object.keys(CredentialHandler.credentialObj).forEach(topic=>{
             options.push(topic);
         });
+        options = options.concat(['create new','exit','save & exit']);
         let questions = [
             {type:'list',name:'choice',message:'Which credentials do you want to edit or view?','choices':options},
             {type:'input',name:'name',message:'How do you want to call these credentials?',when:(answer)=>{return answer.choice === 'create new'}},
@@ -30,6 +34,11 @@ let CredentialHandler = {
             if(answers.choice === 'create new'){
                 CredentialHandler.credentialObj[answers.name] = {};
                 topic = answers.name;
+            } else if(answers.choice === 'save & exit') {
+                CredentialHandler.save();
+                process.exit();
+            } else if(answers.choice === 'exit'){
+                process.exit();
             }
             CredentialHandler.display(topic);
             Object.keys(CredentialHandler.credentialObj[topic]).forEach(property=>{
@@ -42,13 +51,12 @@ let CredentialHandler = {
     display:(topic)=>{
         let existingProperties = Object.keys(CredentialHandler.credentialObj[topic]);
         if(existingProperties.length>0){
-            console.log('***');
-            console.log('Current values of "%s":',topic);
-            console.log('');
+            console.log('\n#####################################');
+            console.log('Current values of "%s":\n',topic);
             existingProperties.forEach(property=>{
                 console.log('   '+property+': '+CredentialHandler.credentialObj[topic][property]);
             });
-            console.log('***');
+            console.log('\n#####################################\n');
         }
 
     },
@@ -75,12 +83,15 @@ let CredentialHandler = {
                 CredentialHandler.display(topic);
                 CredentialHandler.modify(topic);
             } else if(res.choice === 'save & exit'){
-                fs.outputJsonSync(credentialsFolder +'/credentials.json',CredentialHandler.credentialObj);
+                CredentialHandler.save();
                 process.exit();
             } else {
-                process.exit();
+                CredentialHandler.topLevel();
             }
         })
+    },
+    save:()=>{
+        fs.outputJsonSync(credentialsFolder +'/credentials.json',CredentialHandler.credentialObj);
     }
 };
 module.exports = CredentialHandler;
