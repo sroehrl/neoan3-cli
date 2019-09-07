@@ -26,7 +26,7 @@ let fileCreator = {
         if (this.create('frame', name)) {
             let template = this.template('frame');
             if(typeof template.php !== 'undefined'){
-                this.php.fileString = template.php.replace('{{name}}',name);
+                this.php.fileString = template.php.replace(/\{\{name\}\}/g,name);
             } else{
                 this.php.namespace('Frame');
                 this.php.use('Core\\Serve');
@@ -40,7 +40,7 @@ let fileCreator = {
         if (this.create('model', name)) {
             let template = this.template('model');
             if(typeof template.php !== 'undefined'){
-                this.php.fileString = template.php.replace('{{name}}',name+'Model');
+                this.php.fileString = template.php.replace(/\{\{name\}\}/g,name+'Model');
             } else {
                 this.php.namespace('Model');
                 this.php.class(name+'Model', 'IndexModel');
@@ -77,9 +77,9 @@ let fileCreator = {
                     this.php.closingCurly();
                     if(typeof template.php !== 'undefined'){
                         this.php.fileString = template.php
-                            .replace('{{name}}',this.fucase(name));
+                            .replace(/\{\{name\}\}/g,this.fucase(name));
                         if (answer.frame) {
-                            this.php.fileString = this.php.fileString.replace('{{frame}}',this.fucase(answer.frame))
+                            this.php.fileString = this.php.fileString.replace(/\{\{frame\}\}/g,this.fucase(answer.frame))
                         }
                     }
                     break;
@@ -132,7 +132,7 @@ let fileCreator = {
                         if (err) throw err;
                     });
                 } else if(typeof templates[fileEnding] !== 'undefined'){
-                    content = templates[fileEnding].replace('{{name}}',name);
+                    content = templates[fileEnding].replace(/\{\{name\}\}/g,name);
                     if(fileEnding === 'php'){
                         identifier = '.ctrl.';
                     }
@@ -204,7 +204,7 @@ let fileCreator = {
             content = template.html;
         }
 
-        content = content.replace('{{name}}',name);
+        content = content.replace(/\{\{name\}\}/g,name);
 
         fs.writeFile(dir + 'component/' + this.flcase(name) + '/' + this.flcase(name) + '.view.html', content, function (err, outd) {
             if (err) {
