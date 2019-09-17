@@ -56,6 +56,11 @@ This command generates a new frame.
 
 This command creates a new model.
 
+### new transformer
+`neoan3 new transformer [model-name]`
+
+This command creates a new transformer to an existing model. It is recommended to create a migration before executing this command.
+
 ## add
 `neoan3 add [destination] [package] ([repository-endpoint])`
 
@@ -173,6 +178,7 @@ The following files are respected:
 | ce.php | Custom element | name  | *PHP files for custom element is only generated if template is present |
 | ce.js | Custom element | name | |
 | ce.html | Custom element | name | |
+| transformer.php | Model transformer | name, structure | *Transformer usage requires neoan3-apps/transformer |
 
 
 
