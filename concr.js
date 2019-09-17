@@ -1,15 +1,14 @@
 const inquirer = require('inquirer');
 const fs = require('fs');
-const fileCreator = require('./fileCreator');
-const add = require('./add');
+const fileCreator = require('./actions/fileCreator.js');
+const add = require('./actions/add.js');
 const download = require('download-git-repo');
 const execute = require('child_process').execSync;
-const migrate = require('./migrate');
-const publish = require('./publish');
-const calls = require('./calls.js');
-const credentials = require('./credentials.js');
-const progressBar = require('./progress.js');
-const transformer = require('./actions/transformer.js');
+const migrate = require('./actions/migrate.js');
+const publish = require('./actions/publish.js');
+const calls = require('./actions/calls.js');
+const credentials = require('./actions/credentials.js');
+const progressBar = require('./actions/progress.js');
 let concr = {
     getCurrentVersion:function(){
         let pack = JSON.parse(fs.readFileSync(__dirname+'/package.json','utf8'));
@@ -66,7 +65,6 @@ let concr = {
                 case 'migrate': migrate.init(type, name); break;
                 case 'publish': publish.init(type, name); break;
                 case 'credentials': credentials.init(type, name); break;
-                case 'transformer': transformer.init(type, name); break;
                 default:
                     concr.error();
             }
@@ -87,6 +85,9 @@ let concr = {
             case 'model':
                 res = 'newModel';
                 break;
+            case 'transformer':
+                res = 'newTransformer';
+                break;
             default:
                 this.error('Unknown type ' + type);
                 break;
@@ -100,6 +101,7 @@ let concr = {
         inquirer.prompt({name:'internet',message:info,type:'confirm'}).then((answer)=>{
             if(answer.internet){
                 calls.get('neoan.us','/capture.php?name='+name);
+                progressBar.start();
                 console.log('Fetching remote files...');
                 let msg = 'Download completed, running composer...\n';
                 download('sroehrl/neoan3', './', function (err) {
@@ -113,6 +115,7 @@ let concr = {
                         }
 
                     });
+                    progressBar.stop();
                     console.log('All done. In most setups running "npm install" is a good idea now...');
                 });
             } else {
@@ -134,7 +137,10 @@ let concr = {
             fileCreator.model(name);
         })
     },
-
+    newTransformer: function(name) {
+        this.testEnvironment();
+        fileCreator.transformer(name);
+    },
     newComponent: function (name) {
         this.testEnvironment();
         let frames = fs.readdirSync('./frame');

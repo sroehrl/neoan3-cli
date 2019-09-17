@@ -1,6 +1,6 @@
 const fs = require('fs-extra');
 const inquirer = require('inquirer');
-let credentialsFolder = '../../../credentials';
+let credentialsFolder = '../../../../credentials';
 let CredentialHandler = {
     credentialObj:{},
     propertyOptions:['create new','exit','save & exit'],

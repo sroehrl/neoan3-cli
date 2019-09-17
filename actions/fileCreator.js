@@ -1,14 +1,16 @@
 const fs = require('fs-extra');
+const transformer = require('./transformer.js');
+const stringHelper = require('./stringHelper.js');
 let dir = './';
 let fileEndings = ['php','html','js'];
 let fileCreator = {
     create: function (type, name, specify) {
-        if (this.directoryManager.folder(type, this.flcase(name))) {
-            this.directoryManager.version(type, this.flcase(name),specify);
+        if (this.directoryManager.folder(type, stringHelper.flcase(name))) {
+            this.directoryManager.version(type, stringHelper.flcase(name),specify);
             console.log('writing...');
             return true;
         } else if(typeof specify !== 'undefined'){
-            if(specify !== 'custom' && fs.existsSync(dir + type + '/' + this.flcase(name)+'/'+this.fucase(name)+'.ctrl.php')){
+            if(specify !== 'custom' && fs.existsSync(dir + type + '/' + stringHelper.flcase(name)+'/'+stringHelper.fucase(name)+'.ctrl.php')){
                 console.log('I don\'t dare to create such a hybrid. Please proceed manually.');
             } else {
                 if(this.modifyVersion(name,type)){
@@ -49,10 +51,37 @@ let fileCreator = {
                 this.php.closingCurly();
             }
             this.writeToFile(name, 'model');
-            fs.appendFile(dir + '/model/' + this.flcase(name) + '/migrate.json', '{}', function (err) {
+            fs.appendFile(dir + '/model/' + stringHelper.flcase(name) + '/migrate.json', '{}', function (err) {
                 if (err) throw err;
             });
         }
+    },
+    transformer: function (name, cType, answer){
+        // model must exist
+        if(transformer.check(name)){
+            let structure = transformer.produceStructure(name,"    ".repeat(4));
+
+            let template = this.template('transformer');
+            if(typeof template.php !== 'undefined'){
+                this.php.fileString = template.php
+                    .replace(/\{\{name\}\}/g,stringHelper.fucase(name)+'Transformer')
+                    .replace(/\{\{structure\}\}/g,structure);
+            } else {
+
+                this.php.namespace('Model');
+                this.php.class(name+'Transformer', null, 'IndexTransformer');
+                this.php.indentation(1);
+                this.php.staticFunction('modelStructure');
+                this.php.indentation(2);
+                this.php.fileString += 'return '+structure + ';'+"\n";
+                this.php.indentation(1);
+                this.php.closingCurly();
+                this.php.closingCurly();
+            }
+
+        }
+        this.writeToFile(name, 'transformer');
+
     },
     component: function (name, cType, answer) {
         if (this.create('component', name, cType)) {
@@ -71,29 +100,29 @@ let fileCreator = {
                     }
                     if (answer.hasView) {
                         this.htmlView(name);
-                        inner += "hook('main','" + this.flcase(name) + "')->";
+                        inner += "hook('main','" + stringHelper.flcase(name) + "')->";
                     }
                     this.php.classFunction('init', inner + "output();");
                     this.php.closingCurly();
                     if(typeof template.php !== 'undefined'){
                         this.php.fileString = template.php
-                            .replace(/\{\{name\}\}/g,this.fucase(name));
+                            .replace(/\{\{name\}\}/g,stringHelper.fucase(name));
                         if (answer.frame) {
-                            this.php.fileString = this.php.fileString.replace(/\{\{frame\}\}/g,this.fucase(answer.frame))
+                            this.php.fileString = this.php.fileString.replace(/\{\{frame\}\}/g,stringHelper.fucase(answer.frame))
                         }
                     }
                     break;
                 case 'api':
                     template = this.template('api');
-                    this.php.use('Frame\\' + this.fucase(answer.frame));
-                    this.php.class(name, this.fucase(answer.frame));
-                    this.php.classFunction('get' + this.fucase(name), "", "array $body");
-                    this.php.classFunction('post' + this.fucase(name), "", "array $body");
+                    this.php.use('Frame\\' + stringHelper.fucase(answer.frame));
+                    this.php.class(name, stringHelper.fucase(answer.frame));
+                    this.php.classFunction('get' + stringHelper.fucase(name), "", "array $body");
+                    this.php.classFunction('post' + stringHelper.fucase(name), "", "array $body");
                     this.php.closingCurly();
                     if(typeof template.php !== 'undefined'){
                         this.php.fileString = template.php
-                            .replace('{{name}}',this.fucase(name))
-                            .replace('{{frame}}',this.fucase(answer.frame));
+                            .replace('{{name}}',stringHelper.fucase(name))
+                            .replace('{{frame}}',stringHelper.fucase(answer.frame));
                     }
                     break;
                 case 'custom':
@@ -125,10 +154,10 @@ let fileCreator = {
         },
         write: function (name) {
             let content = '', identifier = '.ce.', templates = this.getTemplates();
-            let targetFolder = dir + 'component/' + fileCreator.flcase(name) + '/';
+            let targetFolder = dir + 'component/' + stringHelper.flcase(name) + '/';
             fileEndings.forEach(fileEnding =>{
                 if(typeof templates[fileEnding] === 'undefined' && fileEnding === 'js'){
-                    fs.appendFile(targetFolder + fileCreator.flcase(name) +'.ce.js', '', function (err) {
+                    fs.appendFile(targetFolder + stringHelper.flcase(name) +'.ce.js', '', function (err) {
                         if (err) throw err;
                     });
                 } else if(typeof templates[fileEnding] !== 'undefined'){
@@ -136,7 +165,7 @@ let fileCreator = {
                     if(fileEnding === 'php'){
                         identifier = '.ctrl.';
                     }
-                    fs.appendFile(targetFolder + fileCreator.flcase(name) + identifier +fileEnding, content, function (err) {
+                    fs.appendFile(targetFolder + stringHelper.flcase(name) + identifier +fileEnding, content, function (err) {
                         if (err) throw err;
                     });
                 }
@@ -162,11 +191,14 @@ let fileCreator = {
             this.init();
             this.fileString += "use Neoan3\\" + str + ";\n"
         },
-        class: function (name, extend) {
+        class: function (name, extend, implement) {
             this.init();
-            this.fileString += "\nclass " + fileCreator.fucase(name);
-            if (typeof extend !== 'undefined') {
-                this.fileString += " extends " + fileCreator.fucase(extend);
+            this.fileString += "\nclass " + stringHelper.fucase(name);
+            if (typeof extend !== 'undefined' && extend) {
+                this.fileString += " extends " + stringHelper.fucase(extend);
+            }
+            if (typeof implement !== 'undefined' && implement) {
+                this.fileString += " implements " + stringHelper.fucase(implement);
             }
             this.fileString += "\n{\n";
         },
@@ -206,7 +238,7 @@ let fileCreator = {
 
         content = content.replace(/\{\{name\}\}/g,name);
 
-        fs.writeFile(dir + 'component/' + this.flcase(name) + '/' + this.flcase(name) + '.view.html', content, function (err, outd) {
+        fs.writeFile(dir + 'component/' + stringHelper.flcase(name) + '/' + stringHelper.flcase(name) + '.view.html', content, function (err, outd) {
             if (err) {
                 throw new Error(err);
             }
@@ -233,21 +265,19 @@ let fileCreator = {
             case 'model':
                 localExt = '.model.php';
                 break;
+            case 'transformer':
+                type = 'model';
+                localExt = '.transformer.php';
+                break;
             default:
                 localExt = '.php';
                 break;
         }
-        let loType = this.fucase(type);
-        fs.appendFile(dir + type + '/' + this.flcase(name) + '/' + fileCreator.fucase(name) + localExt, this.php.fileString, function (err) {
+        let loType = stringHelper.fucase(type);
+        fs.appendFile(dir + type + '/' + stringHelper.flcase(name) + '/' + stringHelper.fucase(name) + localExt, this.php.fileString, function (err) {
             if (err) throw err;
             console.log('%s %s created', loType, name);
         });
-    },
-    fucase: function (string) {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    },
-    flcase: function (string) {
-        return string.charAt(0).toLowerCase() + string.slice(1);
     },
     directoryManager: {
         folder: function (type, name) {

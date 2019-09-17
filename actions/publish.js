@@ -1,6 +1,6 @@
 const fs = require('fs-extra');
 const inquirer = require('inquirer');
-const fileCreator = require('./fileCreator');
+const fileCreator = require('./fileCreator.js');
 const gift = require('gift');
 const Publish = {
     currentType: '',
