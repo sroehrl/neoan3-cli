@@ -290,18 +290,18 @@ let fileCreator = {
             }
         },
         version: function (type, name, specify) {
-            fs.appendFile(dir + type + '/' + name.toLowerCase() + '/version.json', fileCreator.versionJson(name,type,specify), function (err) {
+            fs.appendFile(dir + type + '/' + name + '/version.json', fileCreator.versionJson(name,type,specify), function (err) {
                 if (err) throw err;
             });
         }
     },
     modifyVersion: function(name,type){
-        let version = JSON.parse(fs.readFileSync(dir + type + '/' + name.toLowerCase() + '/version.json','utf8'));
+        let version = JSON.parse(fs.readFileSync(dir + type + '/' + name + '/version.json'),'utf8');
         if(typeof version.type !== 'undefined' && version.type === 'hybrid'){
             return false;
         }
         version.type = 'hybrid';
-        fs.writeFile(dir + type + '/' + name.toLowerCase() + '/version.json', JSON.stringify(version, null, 4), function (err) {
+        fs.writeFile(dir + type + '/' + name + '/version.json', JSON.stringify(version, null, 4), function (err) {
             if (err) throw err;
         });
         return true;
