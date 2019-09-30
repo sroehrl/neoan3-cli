@@ -38,6 +38,10 @@ npm install -g neoan3-cli
     e.g. `neoan3 new app myApp`
 3. run in your local webserver
 
+_Note:_ The last parameter (e.g. myApp) should be the web-folder the app is run under. If you are running the instance on the root,
+please omit the last parameter. **Deployment**: It is likely that you will have to change the .htaccess (when running Apache) for your deployment target.
+In most cases, changing the RewriteBase should be enough.
+
 ### new component
 `neoan3 new component [component-name]`
 

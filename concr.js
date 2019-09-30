@@ -46,8 +46,8 @@ let concr = {
                     }
                     let func = concr.processType(type);
                     if (func) {
-                        if (typeof name === 'undefined') {
-                            concr.error('Yeah, so you wanna add a component name to that command, human!');
+                        if (typeof name === 'undefined' && type !== 'app') {
+                            concr.error('Yeah, so you wanna add a name to that command, human!');
                         } else {
                             concr[func](name)
                         }
@@ -98,7 +98,17 @@ let concr = {
     newApp: function (name) {
         let info = "Privacy info: neoan-cli needs internet connectivity. Next to connections to npm, packagist & github, a new app will be sending a call to neoan.us.\n";
         info += "The only data sent is the name of the application so we can count neoan3 applications. NO OTHER DATA will be transmitted nor tracked. Is that ok?";
-        inquirer.prompt({name:'internet',message:info,type:'confirm'}).then((answer)=>{
+        let questions = [{name:'internet',message:info,type:'confirm'}];
+        if(typeof name === 'undefined'){
+            let rootWarning = 'You did not provide a name for this app. neoan3 assumes you will run this app under the web-root. ' +
+                'If this is not the case, please stop here and rerun "neoan3 new app DIRECTORY-NAME". Do you want to continue?';
+            questions.push({name:'root',message:rootWarning,type:'confirm'});
+        }
+        inquirer.prompt(questions).then((answer)=>{
+            if(typeof answer.root !== 'undefined' && !answer.root){
+                console.log('Exiting');
+                process.exit(1);
+            }
             if(answer.internet){
                 calls.get('neoan.us','/capture.php?name='+name);
                 progressBar.start();

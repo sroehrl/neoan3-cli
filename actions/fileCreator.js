@@ -245,9 +245,10 @@ let fileCreator = {
         });
     },
     htaccess: function (base) {
+        let rewriteBase = base ? base +'/' : '';
         let content = fs.readFileSync('./.htaccess', 'utf8');
         let newContent = content.replace(/RewriteBase\s\/[a-z0-9\/-]+/im, function (x) {
-            return 'RewriteBase /' + base + '/';
+            return 'RewriteBase /' + rewriteBase;
         });
         fs.writeFile('./.htaccess', newContent, function (err, outd) {
             if (err) {
