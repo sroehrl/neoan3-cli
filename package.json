@@ -1,6 +1,6 @@
 {
   "name": "neoan3-cli",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "description": "neoan3 cli tool",
   "repository": {
     "type": "git",
@@ -11,6 +11,9 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Stefan Roehrl",
+  "contributors": [
+    { "name": "Rhuan Carlos", "url": "https://github.com/Rhuancpq" }
+  ],
   "license": "MIT",
   "dependencies": {
     "commander": "^2.20.0",
