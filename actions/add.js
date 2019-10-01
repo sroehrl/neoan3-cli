@@ -14,11 +14,13 @@ let Add = {
     async processInput(input, type, extra) {
         this.init(input);
         if (typeof this.composerJson.require[this.name] !== 'undefined') {
-            console.log('Cannot overwrite existing declaration. Please manually inspect composer.json');
+            console.log('Cannot overwrite existing declaration. ' +
+                'Please manually inspect composer.json');
             process.exit(1);
         }
         this.composerJson.require[this.name] = this.version;
-        this.composerJson.extra['installer-paths']['./' + type + '/{$name}'].push(this.name.toString());
+        this.composerJson.extra['installer-paths']['./' + type +
+        '/{$name}'].push(this.name.toString());
         if (typeof extra !== 'undefined') {
             let parts = extra.split('/');
             let lastParts = parts[parts.length - 1].split('.');
@@ -34,10 +36,16 @@ let Add = {
             // custom repo
             let exists = await calls.get('api.github.com', '/repos/' + repo);
 
-            if (typeof exists.error !== 'undefined' || exists.message === 'Not Found') {
+            if (typeof exists.error !== 'undefined' ||
+                exists.message === 'Not Found') {
                 let msg = 'neoan3 was unable to find this repository. ' + "\n";
-                msg += 'It is possible that this repository is private. Do you want to proceed?';
-                let answer = await inquirer.prompt({name: 'anyway', type: 'confirm', message: msg});
+                msg += 'It is possible that this repository is private. ' +
+                    'Do you want to proceed?';
+                let answer = await inquirer.prompt({
+                    name: 'anyway',
+                    type: 'confirm',
+                    message: msg
+                });
                 if (!answer.anyway) {
                     process.exit();
                 }
@@ -46,10 +54,13 @@ let Add = {
             }
             this.addCustomRepo(extra);
         } else {
-            let exists = await calls.get('packagist.org', '/search.json?q=' + this.name);
+            let exists = await calls.get('packagist.org',
+                '/search.json?q=' + this.name);
             if (exists.total !== 1) {
-                console.log('Package "%s" does not exist or is ambiguous. If your package is not registered with ' +
-                    'packagist, add the GitHub-path to your command.', this.name);
+                console.log('Package "%s" does not exist or is ambiguous. ' +
+                    'If your package is not registered with ' +
+                    'packagist, add the GitHub-path to your command.',
+                    this.name);
                 process.exit(1);
             }
         }
@@ -75,10 +86,12 @@ let Add = {
         }
     },
     getComposerJson: function () {
-        this.composerJson = JSON.parse(fs.readFileSync('./composer.json', 'utf8'));
+        this.composerJson = JSON.parse(fs.readFileSync('./composer.json',
+            'utf8'));
     },
     executeComposer: function () {
-        console.log('NOTE: I am trying to run composer synchronously. If this fails, please run "composer update"');
+        console.log('NOTE: I am trying to run composer synchronously.' +
+            'If this fails, please run "composer update"');
         execute('composer update ', (error, stdout, stderr) => {
             if (error) {
                 console.log('Failed to run composer. Please do so manually.');

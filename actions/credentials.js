@@ -12,9 +12,11 @@ let CredentialHandler = {
             }
 
         });
-        let credentialObj = fs.existsSync(credentialsFolder + '/credentials.json');
+        let credentialObj = fs.existsSync(credentialsFolder
+            + '/credentials.json');
         if (credentialObj) {
-            CredentialHandler.credentialObj = fs.readJsonSync(credentialsFolder + '/credentials.json');
+            CredentialHandler.credentialObj = fs
+                .readJsonSync(credentialsFolder + '/credentials.json');
         }
         CredentialHandler.topLevel();
     },
@@ -32,7 +34,8 @@ let CredentialHandler = {
                 'choices': options
             },
             {
-                type: 'input', name: 'name', message: 'How do you want to call these credentials?', when: (answer) => {
+                type: 'input', name: 'name', message: 'How do you want to ' +
+                    'call these credentials?', when: (answer) => {
                     return answer.choice === 'create new'
                 }
             },
@@ -50,20 +53,24 @@ let CredentialHandler = {
                 process.exit();
             }
             CredentialHandler.display(topic);
-            Object.keys(CredentialHandler.credentialObj[topic]).forEach(property => {
-                CredentialHandler.propertyOptions.push('modify ' + property);
-            });
+            Object.keys(CredentialHandler.credentialObj[topic])
+                .forEach(property => {
+                    CredentialHandler.propertyOptions
+                        .push('modify ' + property);
+                });
             CredentialHandler.modify(topic)
 
         });
     },
     display: (topic) => {
-        let existingProperties = Object.keys(CredentialHandler.credentialObj[topic]);
+        let existingProperties = Object.keys(CredentialHandler
+            .credentialObj[topic]);
         if (existingProperties.length > 0) {
             console.log('\n#####################################');
             console.log('Current values of "%s":\n', topic);
             existingProperties.forEach(property => {
-                console.log('   ' + property + ': ' + CredentialHandler.credentialObj[topic][property]);
+                console.log('   ' + property + ': ' + CredentialHandler
+                    .credentialObj[topic][property]);
             });
             console.log('\n#####################################\n');
         }
@@ -78,13 +85,20 @@ let CredentialHandler = {
                 'choices': CredentialHandler.propertyOptions
             },
             {
-                type: 'input', name: 'name', message: 'Name of property', when: (answer) => {
+                type: 'input',
+                name: 'name',
+                message: 'Name of property',
+                when: (answer) => {
                     return answer.choice === 'create new'
                 }
             },
             {
-                type: 'input', name: 'value', message: 'Enter value', when: (answer) => {
-                    return answer.choice.startsWith('modify') || answer.choice === 'create new'
+                type: 'input',
+                name: 'value',
+                message: 'Enter value',
+                when: (answer) => {
+                    return answer.choice.startsWith('modify') ||
+                        answer.choice === 'create new'
                 }
             },
         ];
@@ -93,10 +107,12 @@ let CredentialHandler = {
             if (!isNaN(res.value)) {
                 res.value = +res.value;
             } else {
-                res.value = (res.value === 'true' ? true : (res.value === 'false' ? false : res.value));
+                res.value = (res.value === 'true' ? true :
+                    (res.value === 'false' ? false : res.value));
             }
             if (res.choice.startsWith('modify')) {
-                CredentialHandler.credentialObj[topic][res.choice.substring('modify '.length)] = res.value;
+                CredentialHandler.credentialObj[topic][res.choice
+                    .substring('modify '.length)] = res.value;
                 CredentialHandler.display(topic);
                 CredentialHandler.modify(topic);
             } else if (res.choice === 'create new') {
@@ -113,7 +129,8 @@ let CredentialHandler = {
         })
     },
     save: () => {
-        fs.outputJsonSync(credentialsFolder + '/credentials.json', CredentialHandler.credentialObj);
+        fs.outputJsonSync(credentialsFolder + '/credentials.json',
+            CredentialHandler.credentialObj);
     }
 };
 module.exports = CredentialHandler;

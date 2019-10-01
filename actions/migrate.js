@@ -13,13 +13,40 @@ async function asyncLoop(array, callback) {
 
 async function createCredentials() {
     let questions = [
-        {name: 'host', type: 'input', message: 'db host', default: 'localhost'},
-        {name: 'name', type: 'input', message: 'db name', default: 'neoan'},
-        {name: 'user', type: 'input', message: 'db user', default: 'root'},
-        {name: 'port', type: 'input', message: 'port', default: 3306},
-        {name: 'savePw', type: 'confirm', message: 'Save password?'},
         {
-            name: 'password', type: 'password', message: 'db password', when: function (answers) {
+            name: 'host',
+            type: 'input',
+            message: 'db host',
+            default: 'localhost'
+        },
+        {
+            name: 'name',
+            type: 'input',
+            message: 'db name',
+            default: 'neoan'
+        },
+        {
+            name: 'user',
+            type: 'input',
+            message: 'db user',
+            default: 'root'
+        },
+        {
+            name: 'port',
+            type: 'input',
+            message: 'port',
+            default: 3306
+        },
+        {
+            name: 'savePw',
+            type: 'confirm',
+            message: 'Save password?'
+        },
+        {
+            name: 'password',
+            type: 'password',
+            message: 'db password',
+            when: function (answers) {
                 return answers.savePw;
             }
         }
@@ -128,7 +155,8 @@ const migrate = {
     },
     writeJson: function (model) {
         fs.writeFileSync(dir + './model/' + model + '/migrate.json',
-            JSON.stringify(this.compare.knownModels[model]), function (err, outd) {
+            JSON.stringify(this.compare.knownModels[model]),
+            function (err, outd) {
                 if (err) {
                     throw new Error(err);
                 }
@@ -145,7 +173,9 @@ const migrate = {
                     if (typeof this.knownTables[table] === 'undefined') {
                         queries.push(this.createTableSql(table, model));
                     } else {
-                        queries = queries.concat(this.deepComparison(table, model));
+                        queries = queries.concat(
+                            this.deepComparison(table, model)
+                        );
                     }
                 })
             });
@@ -158,10 +188,12 @@ const migrate = {
                 Object.keys(this.knownTables).forEach((table) => {
                     if (table.startsWith(model)) {
                         present[table] = true;
-                        if (typeof this.knownModels[model][table] === 'undefined') {
+                        if (typeof this
+                            .knownModels[model][table] === 'undefined') {
                             this.knownModels[model][table] = {};
                         }
-                        this.knownModels[model][table] = this.knownTables[table];
+                        this.knownModels[model][table] =
+                            this.knownTables[table];
                     }
                 });
                 Object.keys(this.knownModels[model]).forEach((modelTable) => {
@@ -177,24 +209,30 @@ const migrate = {
                 let queryString = 'ALTER TABLE `' + table + '` ';
                 // does field exist in db?
                 if (typeof this.knownTables[table][field] === 'undefined') {
-                    queryString += 'ADD COLUMN `' + field + '` ' + this.knownModels[model][table][field].type;
+                    queryString += 'ADD COLUMN `' + field + '` ' + this
+                        .knownModels[model][table][field].type;
                     if (i > 0) {
-                        queryString += ' AFTER `' + Object.keys(this.knownModels[model][table])[i - 1] + '`';
+                        queryString += ' AFTER `' + Object.keys(this
+                            .knownModels[model][table])[i - 1] + '`';
 
                     }
                     queryString += ";\n";
                     queries.push(queryString);
-                } else if (this.knownTables[table][field].type !== this.knownModels[model][table][field].type) {
+                } else if (this.knownTables[table][field].type !== this
+                    .knownModels[model][table][field].type) {
                     queryString += 'MODIFY COLUMN `' + field + '` ' +
                         this.knownModels[model][table][field].type + ";\n";
                     queries.push(queryString)
-                } else if (this.knownTables[table][field].key !== this.knownModels[model][table][field].key) {
+                } else if (this.knownTables[table][field].key !== this
+                    .knownModels[model][table][field].key) {
                     // drop?
                     if (this.knownTables[table][field].key) {
-                        queries.push(queryString + ' DROP INDEX `' + field + '`;' + "\n");
+                        queries.push(queryString + ' DROP INDEX `' +
+                            field + '`;' + "\n");
                     }
                     if (this.knownModels[model][table][field].key) {
-                        queryString += ' ADD ' + keyMatch(this.knownModels[model][table][field].key) +
+                        queryString += ' ADD ' + keyMatch(this
+                                .knownModels[model][table][field].key) +
                             '(`' + field + '`)';
                         queries.push(queryString + "\n");
                     }
@@ -209,19 +247,28 @@ const migrate = {
             let createString = 'CREATE TABLE `' + table + '`(';
             let keys = [];
             Object.keys(this.knownModels[model][table]).forEach((field) => {
-                createString += '`' + field + '` ' + this.knownModels[model][table][field].type;
-                createString += this.knownModels[model][table][field].nullable ? ' ' : ' NOT NULL';
-                createString += this.knownModels[model][table][field].a_i ? ' AUTO_INCREMENT' : ' ';
+                createString += '`' + field + '` ' + this
+                    .knownModels[model][table][field].type;
+                createString += this
+                    .knownModels[model][table][field]
+                    .nullable ? ' ' : ' NOT NULL';
+                createString += this
+                    .knownModels[model][table][field]
+                    .a_i ? ' AUTO_INCREMENT' : ' ';
                 createString += "\n,";
                 if (this.knownModels[model][table][field].key) {
-                    keys.push({field: field, type: this.knownModels[model][table][field].key})
+                    keys.push({
+                        field: field,
+                        type: this.knownModels[model][table][field].key
+                    })
                 }
             });
             keys.forEach((key) => {
                 createString += keyMatch(key.type);
                 createString += '(' + key.field + ')' + "\n,";
             });
-            createString = createString.substring(0, createString.length - 1) + ');';
+            createString = createString.substring(0,
+                createString.length - 1) + ');';
             return createString;
         },
         describeTable: async function (tableName) {
@@ -245,7 +292,8 @@ const migrate = {
                 conn.query('SHOW TABLES', (err, results, fields) => {
                     if (err) throw err;
                     let done = asyncLoop(results, async (res) => {
-                        await this.describeTable(res['Tables_in_' + credentials.name]);
+                        await this.describeTable(res['Tables_in_'
+                        + credentials.name]);
                     });
                     resolve(done);
                 })
@@ -255,9 +303,11 @@ const migrate = {
             let modelPath = dir + '/model';
             fs.readdirSync(modelPath).forEach((folder) => {
                 if (folder !== 'index' && fs.lstatSync(modelPath +
-                    '/' + folder).isDirectory() && fs.existsSync(modelPath + '/' + folder + '/migrate.json')) {
-                    this.knownModels[folder] = JSON.parse(fs.readFileSync(modelPath + '/' + folder +
-                        '/migrate.json', 'utf8'))
+                    '/' + folder).isDirectory() && fs
+                    .existsSync(modelPath + '/' + folder + '/migrate.json')) {
+                    this.knownModels[folder] = JSON
+                        .parse(fs.readFileSync(modelPath + '/' + folder +
+                            '/migrate.json', 'utf8'))
                 }
 
             });
@@ -268,7 +318,8 @@ const migrate = {
             conn = mysql.createConnection(realCredentials);
             conn.connect(function (err) {
                 if (err) {
-                    console.log('Unable to establish connection. Run "neoan3 migrate flush" to reset credentials');
+                    console.log('Unable to establish connection. ' +
+                        'Run "neoan3 migrate flush" to reset credentials');
                     process.exit();
                 }
                 console.log('Connection established');
@@ -308,19 +359,22 @@ const migrate = {
                     let userVars = {
                         database: answer
                     };
-                    fs.appendFile(__dirname + '/userVars.json', JSON.stringify(userVars, null, 4),
+                    fs.appendFile(__dirname + '/userVars.json',
+                        JSON.stringify(userVars, null, 4),
                         function (err) {
                             if (err) throw err;
                             resolve({database: answer});
                         });
                 });
             } else {
-                let credentials = JSON.parse(fs.readFileSync(__dirname + '/userVars.json', 'utf8'));
+                let credentials = JSON.parse(fs.readFileSync(__dirname +
+                    '/userVars.json', 'utf8'));
                 if (typeof credentials.database === 'undefined') {
 
                     createCredentials().then(answer => {
                         credentials.database = answer;
-                        fs.writeFile(__dirname + '/userVars.json', JSON.stringify(credentials, null, 4),
+                        fs.writeFile(__dirname + '/userVars.json',
+                            JSON.stringify(credentials, null, 4),
                             function (err) {
                                 if (err) throw err;
                                 resolve(credentials);
@@ -330,13 +384,15 @@ const migrate = {
                     inquirer.prompt([{
                         name: 'proceed',
                         type: 'confirm',
-                        message: 'Selected database is ' + credentials.database.name + '. OK?'
+                        message: 'Selected database is ' +
+                            credentials.database.name + '. OK?'
                     }]).then(answer => {
                         if (answer.proceed) {
                             resolve(credentials);
                         } else {
                             console.log('Exiting...');
-                            console.log('Run "neoan3 migrate flush" to reset credentials ');
+                            console.log('Run "neoan3 migrate flush" ' +
+                                'to reset credentials ');
                             process.exit(1);
                         }
                     })

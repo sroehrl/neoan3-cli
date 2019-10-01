@@ -11,7 +11,8 @@ const credentials = require('./actions/credentials.js');
 const progressBar = require('./actions/progress.js');
 let concr = {
     getCurrentVersion: function () {
-        let pack = JSON.parse(fs.readFileSync(__dirname + '/package.json', 'utf8'));
+        let pack = JSON.parse(fs.readFileSync(__dirname +
+            '/package.json', 'utf8'));
         return pack.version;
     },
     analyseVersions: function (localVersion, remoteVersion) {
@@ -29,12 +30,15 @@ let concr = {
     executer: async function (cmd, type, name, extra) {
         if (typeof cmd !== 'undefined') {
             let localVersion = concr.getCurrentVersion();
-            let onlineVersion = await calls.get('api.npms.io', '/v2/search?q=neoan3-cli');
+            let onlineVersion = await calls.get('api.npms.io',
+                '/v2/search?q=neoan3-cli');
             if (typeof onlineVersion.results !== 'undefined') {
-                if (!concr.analyseVersions(localVersion, onlineVersion.results[0].package.version)) {
+                if (!concr.analyseVersions(localVersion,
+                    onlineVersion.results[0].package.version)) {
                     console.log('/**************');
                     console.log('*');
-                    console.log('* neoan3-cli version ' + onlineVersion.results[0].package.version +
+                    console.log('* neoan3-cli version ' +
+                        onlineVersion.results[0].package.version +
                         ' available. Consider updating');
                     console.log('*');
                     console.log('**************/');
@@ -48,19 +52,24 @@ let concr = {
                     let func = concr.processType(type);
                     if (func) {
                         if (typeof name === 'undefined' && type !== 'app') {
-                            concr.error('Yeah, so you wanna add a name to that command, human!');
+                            concr.error('Yeah, so you wanna add' +
+                                'a name to that command, human!');
                         } else {
                             concr[func](name)
                         }
                     }
                     break;
                 case 'help':
-                    console.log('Please refer to https://github.com/sroehrl/neoan3 for help. Currently, ' +
+                    console.log('Please refer to ' +
+                        'https://github.com/sroehrl/neoan3 ' +
+                        'for help. Currently, ' +
                         'neoan3-cli has very limited possibilities.');
                     break;
                 case 'add':
-                    if (typeof type === 'undefined' || !['component', 'model', 'frame'].includes(type)) {
-                        concr.error('Possible entities are "add component [repo]", ' +
+                    if (typeof type === 'undefined' ||
+                        !['component', 'model', 'frame'].includes(type)) {
+                        concr.error('Possible entities ' +
+                            'are "add component [repo]", ' +
                             '"add model [repo]", "add frame [repo]"')
                     }
                     add.processInput(name, type, extra);
@@ -105,9 +114,12 @@ let concr = {
         return response;
     },
     newApp: function (name) {
-        let info = "Privacy info: neoan-cli needs internet connectivity. Next to connections to npm," +
-            " packagist & github, a new app will be sending a call to neoan.us.\n";
-        info += "The only data sent is the name of the application so we can count neoan3 applications. " +
+        let info = "Privacy info: neoan-cli needs internet connectivity. " +
+            "Next to connections to npm," +
+            " packagist & github, a new app will be " +
+            "sending a call to neoan.us.\n";
+        info += "The only data sent is the name of the application " +
+            "so we can count neoan3 applications. " +
             "NO OTHER DATA will be transmitted nor tracked. Is that ok?";
         let questions = [{name: 'internet', message: info, type: 'confirm'}];
         if (typeof name === 'undefined') {
@@ -115,7 +127,11 @@ let concr = {
                 'neoan3 assumes you will run this app under the web-root. ' +
                 'If this is not the case, please stop here and rerun "neoan3 ' +
                 'new app DIRECTORY-NAME". Do you want to continue?';
-            questions.push({name: 'root', message: rootWarning, type: 'confirm'});
+            questions.push({
+                name: 'root',
+                message: rootWarning,
+                type: 'confirm'
+            });
         }
         inquirer.prompt(questions).then((answer) => {
             if (typeof answer.root !== 'undefined' && !answer.root) {
@@ -129,18 +145,22 @@ let concr = {
                 let msg = 'Download completed, running composer...\n';
                 download('sroehrl/neoan3', './', function (err) {
                     console.log(err ? 'Could not download' : msg);
-                    console.log('NOTE: I am trying to run composer synchronously & quiet. ' +
+                    console.log('NOTE: I am trying to run composer ' +
+                        'synchronously & quiet. ' +
                         'If this fails, please run "composer install"');
                     fileCreator.htaccess(name);
-                    execute('composer install --quiet', (error, stdout, stderr) => {
-                        if (error) {
-                            console.log('Failed to run composer. Please do so manually.');
-                            process.exit(1);
-                        }
+                    execute('composer install --quiet',
+                        (error, stdout, stderr) => {
+                            if (error) {
+                                console.log('Failed to run composer. ' +
+                                    'Please do so manually.');
+                                process.exit(1);
+                            }
 
-                    });
+                        });
                     progressBar.stop();
-                    console.log('All done. In most setups running "npm install" is a good idea now...');
+                    console.log('All done. In most setups running ' +
+                        '"npm install" is a good idea now...');
                 });
             } else {
                 console.log('Exiting');
@@ -156,7 +176,8 @@ let concr = {
     newModel: function (name) {
         fs.stat('./model', function (err, stats) {
             if (err) {
-                concr.error('Are we in the wrong directory, or is this not a neoan3 instance?');
+                concr.error('Are we in the wrong directory, ' +
+                    'or is this not a neoan3 instance?');
             }
             fileCreator.model(name);
         })
@@ -177,7 +198,8 @@ let concr = {
             choices: frames,
             message: 'Which frame are you using?',
             when: function (answers) {
-                return answers.useFrame === true || answers.purpose === 'API endpoint'
+                return answers.useFrame === true ||
+                    answers.purpose === 'API endpoint'
             }
         };
 
@@ -221,7 +243,8 @@ let concr = {
                 case 'API endpoint':
                     asIdentifier = 'api';
                     if (answer.frame === 'NO FRAME INSTALLED') {
-                        concr.error('You cannot create an API endpoint without a frame.');
+                        concr.error('You cannot create an ' +
+                            'API endpoint without a frame.');
                     }
                     fileCreator.component(name, asIdentifier, answer);
 

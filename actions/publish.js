@@ -20,7 +20,8 @@ const Publish = {
         if (this.currentFiles.filter((fileName) => {
             return fileName === 'composer.js'
         }).length > 0) {
-            console.log('This ' + type + ' contains a composer.json and might already be published.');
+            console.log('This ' + type + ' contains a composer.json and ' +
+                'might already be published.');
         }
         this.fileOperations.createComposerShell(type, name).then((composer) => {
             let path = './' + type + '/' + name + '/';
@@ -36,10 +37,13 @@ const Publish = {
                     break;
             }
             if (fs.existsSync(path)) {
-                composer = this.fileOperations.parseDependencies(path, composer);
+                composer = this.fileOperations
+                    .parseDependencies(path, composer);
             }
             fs.writeFileSync('./' + type + '/' + name + '/composer.json',
-                JSON.stringify(composer, null, 4), function (err, outd) {
+                JSON.stringify(composer,
+                    null, 4),
+                function (err, outd) {
                     if (err) {
                         throw new Error(err);
                     }
@@ -48,11 +52,13 @@ const Publish = {
                 {
                     name: 'create',
                     type: 'confirm',
-                    message: 'Do you want neoan3-cli try to create a GIT-repository for you?'
+                    message: 'Do you want neoan3-cli try to ' +
+                        'create a GIT-repository for you?'
                 }, {
                     name: 'github',
                     type: 'confirm',
-                    message: 'Do you want neoan3-cli try to start a remote GitHub repo for you?',
+                    message: 'Do you want neoan3-cli try to ' +
+                        'start a remote GitHub repo for you?',
                     when: (answers) => {
                         return answers.create;
                     }
@@ -60,7 +66,8 @@ const Publish = {
                     name: 'gitType',
                     type: 'list',
                     choices: ['user', 'organisation'],
-                    message: 'What kind of GitHub endpoint are you targeting?',
+                    message: 'What kind of GitHub endpoint ' +
+                        'are you targeting?',
                     when: (answers) => {
                         return answers.github;
                     }
@@ -89,7 +96,8 @@ const Publish = {
             ];
             inquirer.prompt(gitQuestions).then((answers) => {
                 if (answers.create) {
-                    this.gitOps('./' + type + '/' + name, answers).then(() => {
+                    this.gitOps('./' + type + '/' + name,
+                        answers).then(() => {
                         console.log('Done. ');
                         process.exit();
                     })
@@ -130,18 +138,21 @@ const Publish = {
                                         throw new Error(err)
                                     }
                                     let path = 'https://github.com/' +
-                                        (git.gitType === 'organisation' ? git.organisation : git.username) + '/'
-                                        + git.repoName + '.git';
+                                        (
+                                            git.gitType === 'organisation' ?
+                                                git.organisation : git.username)
+                                        + '/' + git.repoName + '.git';
                                     repo.remote_add('origin', path, (err) => {
                                         if (err) {
                                             throw new Error(err)
                                         }
-                                        repo.remote_push('origin master', (err, out) => {
-                                            if (err) {
-                                                throw new Error(err)
-                                            }
-                                            resolve(true);
-                                        });
+                                        repo.remote_push('origin master',
+                                            (err, out) => {
+                                                if (err) {
+                                                    throw new Error(err)
+                                                }
+                                                resolve(true);
+                                            });
                                     });
                                 })
                             })
@@ -163,21 +174,31 @@ const Publish = {
                     if (parts[0] === 'Neoan3') {
                         switch (parts[1]) {
                             case 'Apps':
-                                composer.require['neoan3-apps/' + parts[2].toLowerCase()] = "dev-master";
+                                composer.require['neoan3-apps/' +
+                                parts[2].toLowerCase()] = "dev-master";
                                 break;
                             case 'Component':
-                                composer.require['neoan3-component/' + parts[2].toLowerCase()] = "dev-master";
-                                composer.extra["installer-paths"]["./component/{$name}"].push('neoan3-component/' +
-                                    parts[2].toLowerCase());
+                                composer.require['neoan3-component/' +
+                                parts[2].toLowerCase()] = "dev-master";
+                                composer
+                                    .extra["installer-paths"]
+                                    ["./component/{$name}"]
+                                    .push('neoan3-component/' +
+                                        parts[2].toLowerCase());
                                 break;
                             case 'Frame':
-                                composer.require['neoan3-frame/' + parts[2].toLowerCase()] = "dev-master";
-                                composer.extra["installer-paths"]["./frame/{$name}"].push('neoan3-frame/' +
-                                    parts[2].toLowerCase());
+                                composer.require['neoan3-frame/' +
+                                parts[2].toLowerCase()] = "dev-master";
+                                composer
+                                    .extra["installer-paths"]
+                                    ["./frame/{$name}"]
+                                    .push('neoan3-frame/' +
+                                        parts[2].toLowerCase());
                                 break;
                         }
                     } else {
-                        composer.require[parts[0].toLowerCase() + parts[1].toLowerCase()] = "dev-master";
+                        composer.require[parts[0].toLowerCase()
+                        + parts[1].toLowerCase()] = "dev-master";
                     }
                 })
             }
@@ -193,7 +214,8 @@ const Publish = {
                         message: 'Name',
                         default: 'custom-' + type + '/' + name,
                         validate: function (input) {
-                            return input.match(/\//) !== null ? true : 'Must be vendor/package format'
+                            return input.match(/\//) !== null ? true :
+                                'Must be vendor/package format'
                         }
                     },
                     {
