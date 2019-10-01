@@ -38,11 +38,12 @@ const Publish = {
             if (fs.existsSync(path)) {
                 composer = this.fileOperations.parseDependencies(path, composer);
             }
-            fs.writeFileSync('./' + type + '/' + name + '/composer.json', JSON.stringify(composer, null, 4), function (err, outd) {
-                if (err) {
-                    throw new Error(err);
-                }
-            });
+            fs.writeFileSync('./' + type + '/' + name + '/composer.json',
+                JSON.stringify(composer, null, 4), function (err, outd) {
+                    if (err) {
+                        throw new Error(err);
+                    }
+                });
             let gitQuestions = [
                 {
                     name: 'create',
@@ -58,19 +59,19 @@ const Publish = {
                 }, {
                     name: 'gitType',
                     type: 'list',
-                    choices:['user','organisation'],
+                    choices: ['user', 'organisation'],
                     message: 'What kind of GitHub endpoint are you targeting?',
                     when: (answers) => {
                         return answers.github;
                     }
-                },{
+                }, {
                     name: 'organisation',
                     type: 'input',
                     message: 'Name of your organisation.',
                     when: (answers) => {
                         return answers.gitType === 'organisation';
                     }
-                },{
+                }, {
                     name: 'username',
                     type: 'input',
                     message: 'Your GitHub username',
@@ -128,7 +129,9 @@ const Publish = {
                                     if (err) {
                                         throw new Error(err)
                                     }
-                                    let path = 'https://github.com/' + (git.gitType === 'organisation'?git.organisation:git.username) + '/' + git.repoName + '.git';
+                                    let path = 'https://github.com/' +
+                                        (git.gitType === 'organisation' ? git.organisation : git.username) + '/'
+                                        + git.repoName + '.git';
                                     repo.remote_add('origin', path, (err) => {
                                         if (err) {
                                             throw new Error(err)
@@ -164,11 +167,13 @@ const Publish = {
                                 break;
                             case 'Component':
                                 composer.require['neoan3-component/' + parts[2].toLowerCase()] = "dev-master";
-                                composer.extra["installer-paths"]["./component/{$name}"].push('neoan3-component/' + parts[2].toLowerCase());
+                                composer.extra["installer-paths"]["./component/{$name}"].push('neoan3-component/' +
+                                    parts[2].toLowerCase());
                                 break;
                             case 'Frame':
                                 composer.require['neoan3-frame/' + parts[2].toLowerCase()] = "dev-master";
-                                composer.extra["installer-paths"]["./frame/{$name}"].push('neoan3-frame/' + parts[2].toLowerCase());
+                                composer.extra["installer-paths"]["./frame/{$name}"].push('neoan3-frame/' +
+                                    parts[2].toLowerCase());
                                 break;
                         }
                     } else {

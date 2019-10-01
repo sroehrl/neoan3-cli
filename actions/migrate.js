@@ -127,11 +127,12 @@ const migrate = {
         });
     },
     writeJson: function (model) {
-        fs.writeFileSync(dir + './model/' + model + '/migrate.json', JSON.stringify(this.compare.knownModels[model]), function (err, outd) {
-            if (err) {
-                throw new Error(err);
-            }
-        });
+        fs.writeFileSync(dir + './model/' + model + '/migrate.json',
+            JSON.stringify(this.compare.knownModels[model]), function (err, outd) {
+                if (err) {
+                    throw new Error(err);
+                }
+            });
     },
 
     compare: {
@@ -184,7 +185,8 @@ const migrate = {
                     queryString += ";\n";
                     queries.push(queryString);
                 } else if (this.knownTables[table][field].type !== this.knownModels[model][table][field].type) {
-                    queryString += 'MODIFY COLUMN `' + field + '` ' + this.knownModels[model][table][field].type + ";\n";
+                    queryString += 'MODIFY COLUMN `' + field + '` ' +
+                        this.knownModels[model][table][field].type + ";\n";
                     queries.push(queryString)
                 } else if (this.knownTables[table][field].key !== this.knownModels[model][table][field].key) {
                     // drop?
@@ -192,7 +194,8 @@ const migrate = {
                         queries.push(queryString + ' DROP INDEX `' + field + '`;' + "\n");
                     }
                     if (this.knownModels[model][table][field].key) {
-                        queryString += ' ADD ' + keyMatch(this.knownModels[model][table][field].key) + '(`' + field + '`)';
+                        queryString += ' ADD ' + keyMatch(this.knownModels[model][table][field].key) +
+                            '(`' + field + '`)';
                         queries.push(queryString + "\n");
                     }
 
@@ -251,8 +254,10 @@ const migrate = {
         getModelJsons: function () {
             let modelPath = dir + '/model';
             fs.readdirSync(modelPath).forEach((folder) => {
-                if (folder !== 'index' && fs.lstatSync(modelPath + '/' + folder).isDirectory() && fs.existsSync(modelPath + '/' + folder + '/migrate.json')) {
-                    this.knownModels[folder] = JSON.parse(fs.readFileSync(modelPath + '/' + folder + '/migrate.json', 'utf8'))
+                if (folder !== 'index' && fs.lstatSync(modelPath +
+                    '/' + folder).isDirectory() && fs.existsSync(modelPath + '/' + folder + '/migrate.json')) {
+                    this.knownModels[folder] = JSON.parse(fs.readFileSync(modelPath + '/' + folder +
+                        '/migrate.json', 'utf8'))
                 }
 
             });
@@ -303,10 +308,11 @@ const migrate = {
                     let userVars = {
                         database: answer
                     };
-                    fs.appendFile(__dirname + '/userVars.json', JSON.stringify(userVars, null, 4), function (err) {
-                        if (err) throw err;
-                        resolve({database: answer});
-                    });
+                    fs.appendFile(__dirname + '/userVars.json', JSON.stringify(userVars, null, 4),
+                        function (err) {
+                            if (err) throw err;
+                            resolve({database: answer});
+                        });
                 });
             } else {
                 let credentials = JSON.parse(fs.readFileSync(__dirname + '/userVars.json', 'utf8'));
@@ -314,10 +320,11 @@ const migrate = {
 
                     createCredentials().then(answer => {
                         credentials.database = answer;
-                        fs.writeFile(__dirname + '/userVars.json', JSON.stringify(credentials, null, 4), function (err) {
-                            if (err) throw err;
-                            resolve(credentials);
-                        });
+                        fs.writeFile(__dirname + '/userVars.json', JSON.stringify(credentials, null, 4),
+                            function (err) {
+                                if (err) throw err;
+                                resolve(credentials);
+                            });
                     })
                 } else {
                     inquirer.prompt([{
