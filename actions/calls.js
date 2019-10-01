@@ -1,15 +1,15 @@
 let https = require('https');
 const Calls = {
-    get(host, path){
+    get(host, path) {
         return new Promise((resolve => {
             let options = {
-                hostname:host,
-                path:path,
-                method:'GET',
-                headers: { 'User-Agent': 'Mozilla/5.0' }
+                hostname: host,
+                path: path,
+                method: 'GET',
+                headers: {'User-Agent': 'Mozilla/5.0'}
             };
-            https.get(options,res => {
-                let body ='';
+            https.get(options, res => {
+                let body = '';
                 res.setEncoding('utf-8');
                 res.on('data', data => {
 
@@ -17,14 +17,14 @@ const Calls = {
                 });
 
                 res.on('end', () => {
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         body = JSON.parse(body);
                         resolve(body)
-                    },300);
+                    }, 300);
 
                 });
-            }).on('error',(err)=>{
-                resolve({error:err.port})
+            }).on('error', (err) => {
+                resolve({error: err.port})
             });
         }))
     }

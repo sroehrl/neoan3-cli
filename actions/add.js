@@ -3,42 +3,50 @@ const calls = require('./calls.js');
 const inquirer = require('inquirer');
 const execute = require('child_process').execSync;
 let Add = {
-    name:'',
-    version:'',
-    composerJson:'',
-    init:function(nameStr){
+    name: '',
+    version: '',
+    composerJson: '',
+    init: function (nameStr) {
         this.getComposerJson();
         this.splitNameString(nameStr);
     },
 
-    async processInput(input,type,extra){
+    async processInput(input, type, extra) {
         this.init(input);
-        if(typeof this.composerJson.require[this.name] !== 'undefined'){
-            console.log('Cannot overwrite existing declaration. Please manually inspect composer.json');
+        if (typeof this.composerJson.require[this.name] !== 'undefined') {
+            console.log('Cannot overwrite existing declaration. ' +
+                'Please manually inspect composer.json');
             process.exit(1);
         }
         this.composerJson.require[this.name] = this.version;
-        this.composerJson.extra['installer-paths']['./'+type+'/{$name}'].push(this.name.toString());
-        if(typeof extra !== 'undefined'){
+        this.composerJson.extra['installer-paths']['./' + type +
+        '/{$name}'].push(this.name.toString());
+        if (typeof extra !== 'undefined') {
             let parts = extra.split('/');
-            let lastParts = parts[parts.length-1].split('.');
-            let last ='';
-            lastParts.forEach((part,i)=>{
-                if(i<lastParts.length-1){
+            let lastParts = parts[parts.length - 1].split('.');
+            let last = '';
+            lastParts.forEach((part, i) => {
+                if (i < lastParts.length - 1) {
                     last += part + '.'
                 }
             });
-            last = last.substring(0,last.length-1);
-            let repo = parts[parts.length-2]+'/'+last;
+            last = last.substring(0, last.length - 1);
+            let repo = parts[parts.length - 2] + '/' + last;
             console.log(repo);
             // custom repo
-            let exists = await calls.get('api.github.com','/repos/'+repo);
+            let exists = await calls.get('api.github.com', '/repos/' + repo);
 
-            if(typeof exists.error !== 'undefined' || exists.message === 'Not Found'){
-                let msg = 'neoan3 was unable to find this repository. '+"\n";
-                msg += 'It is possible that this repository is private. Do you want to proceed?';
-                let answer = await  inquirer.prompt({name:'anyway',type:'confirm',message:msg});
-                if(!answer.anyway){
+            if (typeof exists.error !== 'undefined' ||
+                exists.message === 'Not Found') {
+                let msg = 'neoan3 was unable to find this repository. ' + "\n";
+                msg += 'It is possible that this repository is private. ' +
+                    'Do you want to proceed?';
+                let answer = await inquirer.prompt({
+                    name: 'anyway',
+                    type: 'confirm',
+                    message: msg
+                });
+                if (!answer.anyway) {
                     process.exit();
                 }
             } else {
@@ -46,40 +54,46 @@ let Add = {
             }
             this.addCustomRepo(extra);
         } else {
-            let exists = await calls.get('packagist.org','/search.json?q='+this.name);
-            if(exists.total!==1){
-                console.log('Package "%s" does not exist or is ambiguous. If your package is not registered with packagist, add the GitHub-path to your command.',this.name);
+            let exists = await calls.get('packagist.org',
+                '/search.json?q=' + this.name);
+            if (exists.total !== 1) {
+                console.log('Package "%s" does not exist or is ambiguous. ' +
+                    'If your package is not registered with ' +
+                    'packagist, add the GitHub-path to your command.',
+                    this.name);
                 process.exit(1);
             }
         }
         this.writeComposerJson();
         this.executeComposer();
     },
-    addCustomRepo(location){
-        if(typeof this.composerJson.repositories === 'undefined'){
+    addCustomRepo(location) {
+        if (typeof this.composerJson.repositories === 'undefined') {
             this.composerJson.repositories = [];
         }
         this.composerJson.repositories.push({
-            type:'vcs',
-            url:location
+            type: 'vcs',
+            url: location
         })
     },
-    splitNameString:function(str){
+    splitNameString: function (str) {
         let parts = str.split(':');
         this.name = parts[0];
-        if(typeof parts[1] !== 'undefined'){
+        if (typeof parts[1] !== 'undefined') {
             this.version = parts[1];
         } else {
             this.version = 'dev-master';
         }
     },
-    getComposerJson:function(){
-        this.composerJson = JSON.parse(fs.readFileSync('./composer.json','utf8'));
+    getComposerJson: function () {
+        this.composerJson = JSON.parse(fs.readFileSync('./composer.json',
+            'utf8'));
     },
-    executeComposer:function(){
-        console.log('NOTE: I am trying to run composer synchronously. If this fails, please run "composer update"');
-        execute('composer update ',(error, stdout, stderr)=>{
-            if(error){
+    executeComposer: function () {
+        console.log('NOTE: I am trying to run composer synchronously.' +
+            'If this fails, please run "composer update"');
+        execute('composer update ', (error, stdout, stderr) => {
+            if (error) {
                 console.log('Failed to run composer. Please do so manually.');
             }
         });
@@ -87,10 +101,11 @@ let Add = {
         console.log('^ Output from composer. Process ran');
         process.exit(1);
     },
-    writeComposerJson:function(){
+    writeComposerJson: function () {
 
-        fs.writeFileSync('./composer.json',JSON.stringify(this.composerJson, null, 4),function(err,outd){
-            if(err){
+        fs.writeFileSync('./composer.json', JSON.stringify(this.composerJson,
+            null, 4), function (err, outd) {
+            if (err) {
                 throw new Error(err);
             }
         });
