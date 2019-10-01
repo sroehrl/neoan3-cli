@@ -201,3 +201,8 @@ As of September 2019, over ~~4000~~ 4500 neoan3 applications are waiting for doc
 - create tutorials
 
 If you are interested, please fel free to get in touch @ https://github.com/sroehrl
+
+## Contributors
+[sroehrl](https://github.com/sroehrl)
+
+[Rhuancpq](https://github.com/Rhuancpq)
