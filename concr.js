@@ -9,11 +9,22 @@ const publish = require('./actions/publish.js');
 const calls = require('./actions/calls.js');
 const credentials = require('./actions/credentials.js');
 const progressBar = require('./actions/progress.js');
+
+const ascii = '\n' +
+    '::::    ::: :::::::::: ::::::::      :::     ::::    :::  ::::::::  \n' +
+    ':+:+:   :+: :+:       :+:    :+:   :+: :+:   :+:+:   :+: :+:    :+: \n' +
+    ':+:+:+  +:+ +:+       +:+    +:+  +:+   +:+  :+:+:+  +:+        +:+ \n' +
+    '+#+ +:+ +#+ +#++:++#  +#+    +:+ +#++:++#++: +#+ +:+ +#+     +#++:  \n' +
+    '+#+  +#+#+# +#+       +#+    +#+ +#+     +#+ +#+  +#+#+#        +#+ \n' +
+    '#+#   #+#+# #+#       #+#    #+# #+#     #+# #+#   #+#+# #+#    #+# \n' +
+    '###    #### ########## ########  ###     ### ###    ####  ########  \n\n';
+
 let concr = {
     getCurrentVersion: function () {
         let pack = JSON.parse(fs.readFileSync(__dirname +
             '/package.json', 'utf8'));
-        return pack.version;
+
+        return ascii + pack.version;
     },
     analyseVersions: function (localVersion, remoteVersion) {
         let local = localVersion.split('.');
@@ -114,6 +125,7 @@ let concr = {
         return response;
     },
     newApp: function (name) {
+        console.log(ascii);
         let info = "Privacy info: neoan-cli needs internet connectivity. " +
             "Next to connections to npm," +
             " packagist & github, a new app will be " +
@@ -163,7 +175,7 @@ let concr = {
                         '"npm install" is a good idea now...');
                 });
             } else {
-                console.log('Exiting');
+                console.log('Exiting. I cannot create an app without your permission to access the internet.');
                 process.exit(1);
             }
         })
