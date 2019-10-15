@@ -18,7 +18,12 @@ const Calls = {
 
                 res.on('end', () => {
                     setTimeout(() => {
-                        body = JSON.parse(body);
+                        try{
+                            body = JSON.parse(body);
+                        } catch(e){
+                            body = {error:e}
+                        }
+
                         resolve(body)
                     }, 300);
 
