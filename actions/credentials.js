@@ -15,8 +15,10 @@ let CredentialHandler = {
         let credentialObj = fs.existsSync(credentialsFolder
             + '/credentials.json');
         if (credentialObj) {
-            CredentialHandler.credentialObj = fs
-                .readJsonSync(credentialsFolder + '/credentials.json');
+            let reader = fs.readJsonSync(credentialsFolder + '/credentials.json');
+            Object.keys(reader).sort().forEach(function(key) {
+                CredentialHandler.credentialObj[key] = reader[key];
+            });
         }
         CredentialHandler.topLevel();
     },
@@ -111,6 +113,7 @@ let CredentialHandler = {
                     (res.value === 'false' ? false : res.value));
             }
             if (res.choice.startsWith('modify')) {
+                console.log(res.value);
                 CredentialHandler.credentialObj[topic][res.choice
                     .substring('modify '.length)] = res.value;
                 CredentialHandler.display(topic);
