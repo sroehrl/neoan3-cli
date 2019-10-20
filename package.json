@@ -12,16 +12,19 @@
   },
   "author": "Stefan Roehrl",
   "contributors": [
-    { "name": "Rhuan Carlos", "url": "https://github.com/Rhuancpq" }
+    {
+      "name": "Rhuan Carlos",
+      "url": "https://github.com/Rhuancpq"
+    }
   ],
   "license": "MIT",
   "dependencies": {
-    "commander": "^2.20.0",
+    "commander": "^2.20.3",
     "download-git-repo": "^1.1.0",
     "fs": "0.0.1-security",
-    "fs-extra": "^8.0.1",
+    "fs-extra": "^8.1.0",
     "gift": "^0.10.2",
-    "inquirer": "^6.3.1",
+    "inquirer": "^7.0.0",
     "mysql": "^2.17.1",
     "prompt": "^1.0.0",
     "prompt-choices": "^5.0.0"
