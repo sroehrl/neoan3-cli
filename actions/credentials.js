@@ -106,14 +106,13 @@ let CredentialHandler = {
         ];
         inquirer.prompt(questions).then(res => {
             // modify boolean or number
-            if (!isNaN(res.value)) {
+            if (/^[\d]*$/.test(res.value)) {
                 res.value = +res.value;
             } else {
                 res.value = (res.value === 'true' ? true :
                     (res.value === 'false' ? false : res.value));
             }
             if (res.choice.startsWith('modify')) {
-                console.log(res.value);
                 CredentialHandler.credentialObj[topic][res.choice
                     .substring('modify '.length)] = res.value;
                 CredentialHandler.display(topic);
