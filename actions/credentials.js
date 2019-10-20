@@ -15,8 +15,10 @@ let CredentialHandler = {
         let credentialObj = fs.existsSync(credentialsFolder
             + '/credentials.json');
         if (credentialObj) {
-            CredentialHandler.credentialObj = fs
-                .readJsonSync(credentialsFolder + '/credentials.json');
+            let reader = fs.readJsonSync(credentialsFolder + '/credentials.json');
+            Object.keys(reader).sort().forEach(function(key) {
+                CredentialHandler.credentialObj[key] = reader[key];
+            });
         }
         CredentialHandler.topLevel();
     },
@@ -104,7 +106,7 @@ let CredentialHandler = {
         ];
         inquirer.prompt(questions).then(res => {
             // modify boolean or number
-            if (!isNaN(res.value)) {
+            if (/^[\d]*$/.test(res.value)) {
                 res.value = +res.value;
             } else {
                 res.value = (res.value === 'true' ? true :
