@@ -20,11 +20,11 @@ const ascii = '\n' +
     '###    #### ########## ########  ###     ### ###    ####  ########  \n\n';
 
 let concr = {
-    getCurrentVersion: function () {
+    getCurrentVersion: function (pure) {
         let pack = JSON.parse(fs.readFileSync(__dirname +
             '/package.json', 'utf8'));
 
-        return ascii + pack.version;
+        return (typeof pure === 'undefined' ? ascii : '') + pack.version;
     },
     analyseVersions: function (localVersion, remoteVersion) {
         let local = localVersion.split('.');
@@ -40,7 +40,7 @@ let concr = {
     },
     executer: async function (cmd, type, name, extra) {
         if (typeof cmd !== 'undefined') {
-            let localVersion = concr.getCurrentVersion();
+            let localVersion = concr.getCurrentVersion(true);
             let onlineVersion = await calls.get('api.npms.io',
                 '/v2/search?q=neoan3-cli');
             if (typeof onlineVersion.results !== 'undefined') {

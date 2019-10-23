@@ -1,11 +1,12 @@
 const fs = require('fs-extra');
 const inquirer = require('inquirer');
 const stringHelper = require('./stringHelper.js');
+const calls = require('./calls.js');
 const gift = require('gift');
 const Publish = {
     currentType: '',
     currentFiles: [],
-    init(type, name) {
+    async init(type, name) {
         if (!['model', 'frame', 'component'].includes(type)) {
             console.log('I cannot identify this command. Try:');
             console.log('neoan3 publish [model|frame|component] "name"');
@@ -57,8 +58,8 @@ const Publish = {
                 }, {
                     name: 'github',
                     type: 'confirm',
-                    message: 'Do you want neoan3-cli try to ' +
-                        'start a remote GitHub repo for you?',
+                    message: 'neoan3-cli can try to set a remote on GitHub for you.' +
+                        ' Do you want that?',
                     when: (answers) => {
                         return answers.create;
                     }
@@ -89,6 +90,15 @@ const Publish = {
                     name: 'repoName',
                     type: 'input',
                     message: 'Remote name (name on GitHub)',
+                    when: (answers) => {
+                        return answers.github;
+                    }
+                }, {
+                    name: 'confirmationDialog',
+                    type: 'confirm',
+                    message: (answers) => {
+                        return 'Please confirm that the targeted GitHub repository ' + answers.repoName + ' exists (if not, create it)'
+                    },
                     when: (answers) => {
                         return answers.github;
                     }
@@ -127,9 +137,11 @@ const Publish = {
                         if (err) {
                             throw new Error(err)
                         }
-                        if (git.github) {
+                        if (git.github && git.confirmationDialog) {
+
                             repo.identity((err, actor) => {
                                 if (err) {
+
                                     throw new Error(err)
                                 }
 
