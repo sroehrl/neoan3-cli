@@ -1,6 +1,6 @@
 const fs = require('fs-extra');
 const inquirer = require('inquirer');
-const fileCreator = require('./fileCreator.js');
+const stringHelper = require('./stringHelper.js');
 const gift = require('gift');
 const Publish = {
     currentType: '',
@@ -27,13 +27,13 @@ const Publish = {
             let path = './' + type + '/' + name + '/';
             switch (type) {
                 case 'model':
-                    path += fileCreator.fucase(name) + '.model.php';
+                    path += stringHelper.fucase(name) + '.model.php';
                     break;
                 case 'frame':
-                    path += fileCreator.fucase(name) + '.php';
+                    path += stringHelper.fucase(name) + '.php';
                     break;
                 case 'component':
-                    path += fileCreator.fucase(name) + '.ctrl.php';
+                    path += stringHelper.fucase(name) + '.ctrl.php';
                     break;
             }
             if (fs.existsSync(path)) {
