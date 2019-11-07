@@ -134,7 +134,7 @@ Displays current local database settings. If no settings are present, the creati
 
 ### migrate down
 
-`neoan3 migrate models down`
+`neoan3 migrate models down` OR `neoan3 migrate model [model-name] down`
 
 This generates migrate.jsons from the connected database structure. The following assumptions are made:
 
@@ -144,7 +144,7 @@ The recommended way for neoan3 is to follow a snake_case naming for tables and c
 
 ### migrate up
 
-`neoan3 migrate models up`
+`neoan3 migrate models up` OR `neoan3 migrate model [model-name] up`
 
 This creates or alters tables in your connected database based on structural declarations present in your migrate.json files in the folder of models.
 It is important to know that removing a column in your declaration will NOT remove the column from the database, while adding a column will generate the column in your database.

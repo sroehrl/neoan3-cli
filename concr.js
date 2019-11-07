@@ -86,7 +86,7 @@ let concr = {
                     add.processInput(name, type, extra);
                     break;
                 case 'migrate':
-                    migrate.init(type, name);
+                    migrate.init(type, name, extra);
                     break;
                 case 'publish':
                     publish.init(type, name);

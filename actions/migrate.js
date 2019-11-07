@@ -76,13 +76,16 @@ const keyMatch = function ($key) {
 
 const migrate = {
 
-    init: function (type, direction) {
+    init: function (type, nameDirection, direction) {
         switch (type) {
             case 'flush':
                 this.flush();
                 break;
+            case 'model':
+                this.model(nameDirection,direction);
+                break;
             case 'models':
-                this.models(direction);
+                this.models(nameDirection);
                 break;
             case 'config':
                 this.ensure().then(x => console.log(x));
@@ -101,6 +104,21 @@ const migrate = {
             });
         }
     },
+    model: function(model, direction){
+        this.ensure().then((credentials) => {
+                this.compare.getModelJsons();
+                switch (direction) {
+                    case 'down':
+                        this.processDown(credentials.database, model);
+                        break;
+                    case 'up':
+                        this.processUp(credentials.database, model);
+                        break;
+                    default:
+                        console.log(direction + '? This command is unknown to me.');
+                }
+        });
+    },
     models: function (direction) {
         this.ensure().then((credentials) => {
             this.compare.getModelJsons();
@@ -117,10 +135,10 @@ const migrate = {
 
         })
     },
-    processUp: function (credentials) {
+    processUp: function (credentials, distinct) {
         this.connect(credentials).then(() => {
             this.compare.getFullDb(credentials).then(() => {
-                let queries = this.compare.compareUp();
+                let queries = this.compare.compareUp(distinct);
 
                 asyncLoop(queries, async (sql) => {
                     try {
@@ -138,14 +156,15 @@ const migrate = {
             })
         });
     },
-    processDown: function (credentials) {
+    processDown: function (credentials, distinct) {
         this.connect(credentials).then(() => {
             this.compare.getFullDb(credentials).then(() => {
                 this.compare.compareDown();
                 Object.keys(this.compare.knownModels).forEach((model) => {
-                    console.log('writing model: ' + model);
-                    this.writeJson(model);
-
+                    if(typeof distinct === 'undefined' || distinct === model){
+                        console.log('writing model: ' + model);
+                        this.writeJson(model);
+                    }
                 });
                 console.log('done');
                 process.exit()
@@ -166,18 +185,21 @@ const migrate = {
     compare: {
         knownModels: {},
         knownTables: {},
-        compareUp: function () {
+        compareUp: function (distinct) {
             let queries = [];
             Object.keys(this.knownModels).forEach((model) => {
-                Object.keys(this.knownModels[model]).forEach((table) => {
-                    if (typeof this.knownTables[table] === 'undefined') {
-                        queries.push(this.createTableSql(table, model));
-                    } else {
-                        queries = queries.concat(
-                            this.deepComparison(table, model)
-                        );
-                    }
-                })
+                if(typeof distinct === 'undefined' || distinct === model){
+                    Object.keys(this.knownModels[model]).forEach((table) => {
+                        if (typeof this.knownTables[table] === 'undefined') {
+                            queries.push(this.createTableSql(table, model));
+                        } else {
+                            queries = queries.concat(
+                                this.deepComparison(table, model)
+                            );
+                        }
+                    })
+                }
+
             });
             return queries;
         },
