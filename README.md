@@ -64,6 +64,28 @@ This command creates a new model.
 `neoan3 new transformer [model-name]`
 
 This command creates a new transformer to an existing model. It is recommended to create a migration before executing this command.
+Don't forget to change the related model accordingly:
+```PHP
+namespace Neoan3\Model;
+
+use Neoan3\Apps\Transformer;
+use Neoan3\Core\RouteException;
+
+/*
+ * @method static create($array)
+ * @method static find($array)
+ * @method static get($id)
+ * @method static update($array)
+ */
+
+class MyModel extends IndexModel
+{
+    static function __callStatic($name, $arguments)
+    {
+        return Transformer::addMagic($name,$arguments);
+    }
+}
+```
 
 ## add
 `neoan3 add [destination] [package] ([repository-endpoint])`
