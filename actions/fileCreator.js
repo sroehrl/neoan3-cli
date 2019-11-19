@@ -79,7 +79,8 @@ let fileCreator = {
         if (transformer.check(name)) {
             let structure = transformer.produceStructure(
                 name,
-                "    ".repeat(4)
+                "    ",
+                "    ".repeat(3)
             );
 
             let template = this.template('transformer');
@@ -98,7 +99,7 @@ let fileCreator = {
                     'IndexTransformer'
                 );
                 this.php.indentation(1);
-                this.php.staticFunction('modelStructure');
+                this.php.staticFunction('modelStructure','$givenId = false');
                 this.php.indentation(2);
                 this.php.fileString += 'return ' + structure + ';' + "\n";
                 this.php.indentation(1);
