@@ -16,21 +16,46 @@ const transformer = {
         return true;
     },
     structureString: '[',
-    produceStructure(name, indentation) {
+    produceStructure(name, indentation, offSetIndentation) {
         let json = fs.readJsonSync('./model/' +
             stringHelper.flcase(name) + '/migrate.json');
         Object.keys(json).forEach(key => {
             // key == model ? main
             if (key === stringHelper.camel2snake(stringHelper.flcase(name))) {
-                transformer
-                    .structureString += `\n${indentation}'${key}' => [],`;
+                // main
+                Object.keys(json[key]).forEach(field =>{
+                    transformer.structureString += transformer.fieldStructure(field, json[key][field],indentation,offSetIndentation)
+                })
             } else {
-                transformer.structureString += `\n${indentation}'${key}' =>
-                [\n${indentation.repeat(2)}'depth' =>
-                'many'\n${indentation.repeat(2)}],`
+                let requiredFields = transformer.requiredFields(json[key]);
+                transformer.structureString += `\n${offSetIndentation}'${key}' =>[` +
+                `\n${offSetIndentation}${indentation}'depth' => 'many',` +
+                `\n${offSetIndentation}${indentation}'required_fields' => [${requiredFields}],` +
+                `\n${offSetIndentation}],`
             }
         });
-        return transformer.structureString + `\n${indentation}]`;
+        let finalOffset = offSetIndentation.substring(0, offSetIndentation.length - indentation.length);
+        return transformer.structureString + `\n${finalOffset}]`;
+    },
+    requiredFields(tableJson){
+        let fieldString = '';
+        Object.keys(tableJson).forEach(field =>{
+            if(transformer.requiredCheck(tableJson[field])){
+                fieldString += (fieldString === '' ? '' : ', ') + `'${field}'`;
+            }
+        });
+        return fieldString;
+    },
+    fieldStructure(name, definition, indentation, offSetIndentation){
+        let field = `\n${offSetIndentation}'${name}' => [`;
+        if(transformer.requiredCheck(definition)){
+            field += `\n${offSetIndentation}${indentation}'required' => true,`
+        }
+        field += `\n${offSetIndentation}],`;
+        return field;
+    },
+    requiredCheck(definition){
+        return !definition.nullable && !definition.default && definition.key !== 'primary';
     }
 };
 module.exports = transformer;
