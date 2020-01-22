@@ -50,7 +50,17 @@ let Add = {
                     process.exit();
                 }
             } else {
-                console.log(exists);
+                let infoTable = {};
+                ['homepage','description'].forEach(key =>{
+                    if(exists[key]){
+                        infoTable[key] = exists[key];
+                    }
+                });
+                if(exists.license){
+                    infoTable.license = exists.license.name;
+                }
+
+                console.table(infoTable);
             }
             this.addCustomRepo(extra);
         } else {
