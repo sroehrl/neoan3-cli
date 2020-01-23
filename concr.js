@@ -175,8 +175,9 @@ let concr = {
 
                         });
                     progressBar.stop();
-                    console.log('All done. In most setups running ' +
-                        '"npm install" is a good idea now...');
+                    console.log('****');
+                    console.log("* All done *");
+                    console.log("****");
                 });
             } else {
                 console.log('Exiting. I cannot create an app without your permission to access the internet.');

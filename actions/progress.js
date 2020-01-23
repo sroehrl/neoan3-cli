@@ -1,13 +1,9 @@
 let runner;
 const go = function (amount) {
+    process.stdout.write('[');
     runner = setInterval(() => {
-        let string = '';
-        for (let i = 0; i <= amount; i++) {
-            string += '*';
-        }
-        amount++;
-        console.log(string);
-    }, 1000);
+        process.stdout.write("=");
+    }, 500);
 };
 
 
@@ -18,5 +14,7 @@ module.exports = {
     },
     stop: function () {
         clearInterval(runner);
+        process.stdout.write(']');
+        console.log('');
     }
 };
