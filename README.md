@@ -220,7 +220,7 @@ The following files are respected:
 The GitHub repo [neoan3-cli](https://github.com/sroehrl/neoan3-cli) is actively maintained. Please report issues there.
 
 # Collaborators wanted
-Over 5000 neoan3 applications are waiting for documentation. I'd love to have some people to help me:
+Over 8000 neoan3 applications are waiting for documentation. I'd love to have some people to help me:
 
 - document neoan3 (framework)
 - document neoan3-cli
