@@ -156,10 +156,11 @@ let concr = {
             }
             if (answer.internet) {
                 calls.get('neoan.us', '/capture.php?name=' + name);
-                progressBar.start();
                 console.log('Fetching remote files...');
+                progressBar.start();
                 let msg = 'Download completed, running composer...\n';
                 download('sroehrl/neoan3', './', function (err) {
+                    progressBar.stop();
                     console.log(err ? 'Could not download' : msg);
                     console.log('NOTE: I am trying to run composer ' +
                         'synchronously & quiet. ' +
@@ -174,7 +175,7 @@ let concr = {
                             }
 
                         });
-                    progressBar.stop();
+
                     console.log('****');
                     console.log("* All done *");
                     console.log("****");
