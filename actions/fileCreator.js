@@ -48,6 +48,7 @@ let fileCreator = {
         if (this.create('model', name)) {
             let template = this.template('model');
             if (typeof template.php !== 'undefined') {
+                this.php.fileString = stringHelper.embrace(template.php, {name:name+'Model'});
                 this.php.fileString = template.php.replace(/\{\{name\}\}/g,
                     name + 'Model');
             } else {
@@ -85,11 +86,10 @@ let fileCreator = {
 
             let template = this.template('transformer');
             if (typeof template.php !== 'undefined') {
-                this.php.fileString = template.php
-                    .replace(/\{\{name\}\}/g,
-                        stringHelper.fucase(name) +
-                        'Transformer')
-                    .replace(/\{\{structure\}\}/g, structure);
+                this.php.fileString = stringHelper.embrace(template.php,{
+                    name: name + 'Transformer',
+                    structure: structure
+                });
             } else {
 
                 this.php.namespace('Model');
@@ -135,16 +135,12 @@ let fileCreator = {
                         inner + "output();");
                     this.php.closingCurly();
                     if (typeof template.php !== 'undefined') {
-                        this.php
-                            .fileString = template.php
-                            .replace(/\{\{name\}\}/g,
-                                stringHelper.fucase(name));
-                        if (answer.frame) {
-                            this.php
-                                .fileString = this.php.fileString
-                                .replace(/\{\{frame\}\}/g,
-                                    stringHelper.fucase(answer.frame))
+                        let embrace = {name:name};
+                        if(answer.frame){
+                            embrace.frame = answer.frame;
                         }
+                        this.php
+                            .fileString = stringHelper.embrace(template.php,{name:name});
                     }
                     break;
                 case 'api':
@@ -162,10 +158,8 @@ let fileCreator = {
                     this.php
                         .closingCurly();
                     if (typeof template.php !== 'undefined') {
-                        this.php.fileString = template.php
-                            .replace('{{name}}', stringHelper.fucase(name))
-                            .replace('{{frame}}',
-                                stringHelper.fucase(answer.frame));
+                        let embrace = {name:name, frame:answer.frame};
+                        this.php.fileString = stringHelper.embrace(template.php,embrace);
                     }
                     break;
                 case 'custom':
@@ -196,11 +190,12 @@ let fileCreator = {
             return fileCreator.template('ce')
         },
         write: function (name) {
-            let content = '', identifier = '.ce.',
+            let identifier, content = '',
                 templates = this.getTemplates();
             let targetFolder = dir + 'component/' + stringHelper
                 .flcase(name) + '/';
             fileEndings.forEach(fileEnding => {
+                identifier = '.ce.';
                 if (typeof templates[fileEnding] === 'undefined' &&
                     fileEnding === 'js') {
                     fs.appendFile(targetFolder +
@@ -209,8 +204,8 @@ let fileCreator = {
                         if (err) throw err;
                     });
                 } else if (typeof templates[fileEnding] !== 'undefined') {
-                    content = templates[fileEnding]
-                        .replace(/\{\{name\}\}/g, name);
+                    content = stringHelper.embrace(templates[fileEnding],{name:name});
+
                     if (fileEnding === 'php') {
                         identifier = '.ctrl.';
                     }
@@ -289,10 +284,8 @@ let fileCreator = {
         let content = '<h1>{{name}}</h1>', template = this
             .template('view');
         if (typeof template.html !== 'undefined') {
-            content = template.html;
+            content = stringHelper.embrace(template.html, {name:name});
         }
-
-        content = content.replace(/\{\{name\}\}/g, name);
 
         fs.writeFile(dir + 'component/' + stringHelper.flcase(name) + '/' +
             stringHelper.flcase(name) + '.view.html',
@@ -383,5 +376,6 @@ let fileCreator = {
         let json = {"version": "0.0.1", "name": name, "type": type};
         return JSON.stringify(json, null, 4);
     },
+
 };
 module.exports = fileCreator;
