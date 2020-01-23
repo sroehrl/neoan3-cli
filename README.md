@@ -6,14 +6,25 @@ neoan3 CLI helper
 
 ## Automate your [neoan3](https://github.com/sroehrl/neoan3) needs ([documentation](http://neoan.us/neoan3docs/getting-started/))
 
-Official neoan3 cli tool for
+Official neoan3 cli tool 
 
-- application creation
-- model creation
-- model migration
-- model packaging & publishing
-- component creation
-- component packaging & publishing
+1. [Requirements](#Requires)
+2. [Installation](#installation)
+3. Creating new ...
+    1. [app](#starting-a-new-neoan3-application)
+    2. [component](#new-component)
+    3. [frame](#new-frame)
+    4. [model](#new-model)
+    5. [transformer](#new-transformer)
+4. [Installing (third party) scripts](#install)
+5. [Reusing components/frames/models](#add)
+6. [Handling credentials](#credentials)
+7. [Database migration](#migrate)
+8. [Publishing components/frames/models to be reused](#publish)
+9. [File creation templating](#templates)
+10. [Reporting issues](#reporting-issues)
+11. [Collaboration](#collaborators-wanted)
+    
 
 ### Requires
 - node & npm
@@ -200,7 +211,7 @@ Since you have a valid composer.json in your repository now, you may publish on 
 
 ## Templates
 You can influence the generated output with templates. To do so, place a folder _template in your project.
-Basic variable support works with double curly braces without spaces ( {{example}} )
+Basic variable support works with double curly braces without spaces ( {{name}} )
 The following files are respected:
 
 | template file | entity | variable(s) | Note |
@@ -213,6 +224,14 @@ The following files are respected:
 | ce.html | Custom element | name | |
 | transformer.php | Model transformer | name, structure | *Transformer usage requires neoan3-apps/transformer |
 
+**_Casing:_** By default variables are translated to PascalCase. 
+Depending on your needs, you have the following possibilities for your casing:
+
+| Modifier | Example | Transformation |
+| --- | --- | --- |
+| .lower | {{name.lower}} | Converts "name" to lower case |
+| .camel | {{name.camel}} | Converts "name" to camelCase |
+| .pascal | {{name.pascal}} | Forces PascalCase (for edge cases) |
 
 
 # Reporting issues
