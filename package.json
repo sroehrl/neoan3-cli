@@ -1,6 +1,6 @@
 {
   "name": "neoan3-cli",
-  "version": "2.2.6",
+  "version": "2.3.0",
   "description": "neoan3 cli tool",
   "repository": {
     "type": "git",
@@ -19,7 +19,8 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "commander": "^2.20.3",
+    "axios": "^0.19.2",
+    "commander": "^4.1.0",
     "download-git-repo": "^1.1.0",
     "fs": "0.0.1-security",
     "fs-extra": "^8.1.0",
@@ -27,7 +28,9 @@
     "inquirer": "^7.0.0",
     "mysql": "^2.17.1",
     "prompt": "^1.0.0",
-    "prompt-choices": "^5.0.0"
+    "prompt-choices": "^5.0.0",
+    "tailwindcss": "^1.1.4",
+    "vue": "^2.6.11"
   },
   "bin": {
     "neoan3": "./index.js"

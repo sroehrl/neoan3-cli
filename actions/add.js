@@ -32,7 +32,6 @@ let Add = {
             });
             last = last.substring(0, last.length - 1);
             let repo = parts[parts.length - 2] + '/' + last;
-            console.log(repo);
             // custom repo
             let exists = await calls.get('api.github.com', '/repos/' + repo);
 
@@ -51,7 +50,7 @@ let Add = {
                 }
             } else {
                 let infoTable = {};
-                ['homepage','description'].forEach(key =>{
+                ['name','homepage','description','url'].forEach(key =>{
                     if(exists[key]){
                         infoTable[key] = exists[key];
                     }

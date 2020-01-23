@@ -36,6 +36,21 @@ const Calls = {
             });
         }))
     },
+    getRaw(url, callback) {
+        return new Promise(resolve => {
+            https.get(url, res => {
+                let body = '';
+                res.setEncoding('utf-8');
+                res.on('data', data => {
+
+                    body += data;
+                });
+                res.on('end', ()=>{
+                    resolve(body);
+                })
+            });
+        });
+    },
     get(host, path) {
         let options = this.getOptions(host, path, 'GET');
         return new Promise((resolve => {

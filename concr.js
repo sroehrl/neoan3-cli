@@ -9,6 +9,7 @@ const publish = require('./actions/publish.js');
 const calls = require('./actions/calls.js');
 const credentials = require('./actions/credentials.js');
 const progressBar = require('./actions/progress.js');
+const install = require('./actions/install.js');
 
 const ascii = '\n' +
     '::::    ::: :::::::::: ::::::::      :::     ::::    :::  ::::::::  \n' +
@@ -38,7 +39,7 @@ let concr = {
         }
         return true;
     },
-    executer: async function (cmd, type, name, extra) {
+    executer: async function (cmd, type, name, extra, options) {
         if (typeof cmd !== 'undefined') {
             let localVersion = concr.getCurrentVersion(true);
             let onlineVersion = await calls.get('api.npms.io',
@@ -75,6 +76,9 @@ let concr = {
                         'https://github.com/sroehrl/neoan3 ' +
                         'for help. Currently, ' +
                         'neoan3-cli has very limited possibilities.');
+                    break;
+                case 'install':
+                    await install.init(name, type, extra, options);
                     break;
                 case 'add':
                     if (typeof type === 'undefined' ||

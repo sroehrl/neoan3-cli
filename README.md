@@ -86,6 +86,13 @@ class MyModel extends IndexModel
     }
 }
 ```
+## install
+
+`neoan3 install [url]`
+
+This command executes external installation scripts in cases where composer cannot.
+In most cases you want to use "add" instead of "install" to ensure proper collaboration.
+This command is normally used to simplify installation of 3rd party applications.
 
 ## add
 `neoan3 add [destination] [package] ([repository-endpoint])`
