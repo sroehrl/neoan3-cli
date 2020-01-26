@@ -209,10 +209,9 @@ let fileCreator = {
 
                     if (fileEnding === 'php') {
                         identifier = '.ctrl.';
-                        casedName = stringHelper.fucase(name);
                     }
                     fs.appendFile(
-                        targetFolder + casedName
+                        targetFolder + (fileEnding === 'php' ? stringHelper.fucase(name) : casedName )
                         + identifier + fileEnding,
                         content, function (err) {
                             if (err) throw err;
