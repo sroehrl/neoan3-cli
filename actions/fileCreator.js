@@ -191,6 +191,7 @@ let fileCreator = {
         },
         write: function (name) {
             let identifier, content = '',
+                casedName = stringHelper.flcase(name),
                 templates = this.getTemplates();
             let targetFolder = dir + 'component/' + stringHelper
                 .flcase(name) + '/';
@@ -208,9 +209,10 @@ let fileCreator = {
 
                     if (fileEnding === 'php') {
                         identifier = '.ctrl.';
+                        casedName = stringHelper.fucase(name);
                     }
                     fs.appendFile(
-                        targetFolder + stringHelper.flcase(name)
+                        targetFolder + casedName
                         + identifier + fileEnding,
                         content, function (err) {
                             if (err) throw err;
