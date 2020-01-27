@@ -282,10 +282,12 @@ let fileCreator = {
         }
     },
     htmlView: function (name) {
-        let content = '<h1>{{name}}</h1>', template = this
+        let content, template = this
             .template('view');
         if (typeof template.html !== 'undefined') {
             content = stringHelper.embrace(template.html, {name:name});
+        } else {
+            content = stringHelper.embrace('<h1>{{name}}</h1>',{name:name});
         }
 
         fs.writeFile(dir + 'component/' + stringHelper.flcase(name) + '/' +
