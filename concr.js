@@ -10,6 +10,7 @@ const calls = require('./actions/calls.js');
 const credentials = require('./actions/credentials.js');
 const progressBar = require('./actions/progress.js');
 const install = require('./actions/install.js');
+const stringHelper = require('./actions/stringHelper.js');
 
 const ascii = '\n' +
     '::::    ::: :::::::::: ::::::::      :::     ::::    :::  ::::::::  \n' +
@@ -27,25 +28,13 @@ let concr = {
 
         return (typeof pure === 'undefined' ? ascii : '') + pack.version;
     },
-    analyseVersions: function (localVersion, remoteVersion) {
-        let local = localVersion.split('.');
-        let remote = remoteVersion.split('.');
-        for (let i = 0; i < 3; i++) {
-            if (Number(local[i]) > Number(remote[i])) {
-                return true;
-            } else if (Number(local[i]) < Number(remote[i])) {
-                return false;
-            }
-        }
-        return true;
-    },
     executer: async function (cmd, type, name, extra, options) {
         if (typeof cmd !== 'undefined') {
             let localVersion = concr.getCurrentVersion(true);
             let onlineVersion = await calls.get('api.npms.io',
                 '/v2/search?q=neoan3-cli');
             if (typeof onlineVersion.results !== 'undefined') {
-                if (!concr.analyseVersions(localVersion,
+                if (!stringHelper.analyzeVersions(localVersion,
                     onlineVersion.results[0].package.version)) {
                     console.log('/**************');
                     console.log('*');
@@ -87,7 +76,7 @@ let concr = {
                             'are "add component [repo]", ' +
                             '"add model [repo]", "add frame [repo]"')
                     }
-                    add.processInput(name, type, extra);
+                    await add.processInput(name, type, extra);
                     break;
                 case 'migrate':
                     migrate.init(type, name, extra);

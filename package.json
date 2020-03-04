@@ -8,7 +8,7 @@
   },
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "author": "Stefan Roehrl",
   "contributors": [
@@ -34,5 +34,8 @@
   },
   "bin": {
     "neoan3": "./index.js"
+  },
+  "devDependencies": {
+    "mocha": "^7.1.0"
   }
 }
