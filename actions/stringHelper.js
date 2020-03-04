@@ -24,6 +24,18 @@ const stringHelper = {
         });
 
         return templateString;
+    },
+    analyzeVersions(localVersion, remoteVersion){
+        let local = localVersion.split('.');
+        let remote = remoteVersion.split('.');
+        for (let i = 0; i < 3; i++) {
+            if (Number(local[i]) > Number(remote[i])) {
+                return true;
+            } else if (Number(local[i]) < Number(remote[i])) {
+                return false;
+            }
+        }
+        return true;
     }
 };
 module.exports = stringHelper;
