@@ -36,6 +36,7 @@
     "neoan3": "./index.js"
   },
   "devDependencies": {
-    "mocha": "^7.1.0"
+    "mocha": "^7.1.0",
+    "mock-fs": "^4.11.0"
   }
 }
