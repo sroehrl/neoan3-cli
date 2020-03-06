@@ -76,13 +76,23 @@ let concr = {
                             'are "add component [repo]", ' +
                             '"add model [repo]", "add frame [repo]"')
                     }
-                    await add.processInput(name, type, extra);
+                    try {
+                        await add.processInput(name, type, extra);
+                    } catch (e) {
+                        console.log(e);
+                    }
+
                     break;
                 case 'migrate':
                     migrate.init(type, name, extra);
                     break;
                 case 'publish':
-                    publish.init(type, name);
+                    try {
+                        await publish.init(type, name);
+                    } catch (e) {
+                        console.log(e);
+                    }
+
                     break;
                 case 'credentials':
                     credentials.init(type, name);
