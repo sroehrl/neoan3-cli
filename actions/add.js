@@ -14,9 +14,9 @@ let Add = {
     async processInput(input, type, extra) {
         this.init(input);
         if (typeof this.composerJson.require[this.name] !== 'undefined') {
-            console.log('Cannot overwrite existing declaration. ' +
+
+            throw new Error('Cannot overwrite existing declaration. ' +
                 'Please manually inspect composer.json');
-            process.exit(1);
         }
         this.composerJson.require[this.name] = this.version;
         this.composerJson.extra['installer-paths']['./' + type +
@@ -46,7 +46,7 @@ let Add = {
                     message: msg
                 });
                 if (!answer.anyway) {
-                    process.exit();
+                    throw new Error('Process stopped by user');
                 }
             } else {
                 let infoTable = {};
@@ -66,11 +66,7 @@ let Add = {
             let exists = await calls.get('packagist.org',
                 '/search.json?q=' + this.name);
             if (exists.total !== 1) {
-                console.log('Package "%s" does not exist or is ambiguous. ' +
-                    'If your package is not registered with ' +
-                    'packagist, add the GitHub-path to your command.',
-                    this.name);
-                process.exit(1);
+                throw new Error('Cannot find package '+this.name)
             }
         }
         this.writeComposerJson();
@@ -101,14 +97,17 @@ let Add = {
     executeComposer: function () {
         console.log('NOTE: I am trying to run composer synchronously.' +
             'If this fails, please run "composer update"');
-        execute('composer update ', (error, stdout, stderr) => {
-            if (error) {
-                console.log('Failed to run composer. Please do so manually.');
-            }
-        });
+        if(!process.env.MOCKCP){
+            execute('composer update ', (error, stdout, stderr) => {
+                if (error) {
+                    console.log('Failed to run composer. Please do so manually.');
+                }
+            });
+        }
+
         console.log('    ________________________');
         console.log('^ Output from composer. Process ran');
-        process.exit(1);
+        // process.exit(1);
     },
     writeComposerJson: function () {
 
