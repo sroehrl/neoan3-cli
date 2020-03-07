@@ -1,83 +1,36 @@
-let https = require('https');
+let axios = require('axios');
 const Calls = {
     getOptions(host, path, method) {
-        return {
-            hostname: host,
-            path: path,
+        let options = {
+            url: host,
             method: method,
             headers: {'User-Agent': 'Mozilla/5.0'}
         };
+        if(method === 'get'){
+            options.params = path;
+        } else {
+            options.data = path;
+        }
+        return options;
     },
-    post(host, body) {
-        let options = this.getOptions(host, '', 'POST');
-        return new Promise((resolve => {
-
-            https.request(options, res => {
-                let body = body;
-                res.setEncoding('utf-8');
-                res.on('data', data => {
-                    body += data;
-                });
-
-                res.on('end', () => {
-                    setTimeout(() => {
-                        try {
-                            body = JSON.parse(body);
-                        } catch (e) {
-                            body = {error: e}
-                        }
-
-                        resolve(body)
-                    }, 300);
-
-                });
-            }).on('error', (err) => {
-                resolve({error: err.port})
-            });
-        }))
+    async post(host, body) {
+        let options = this.getOptions(host, body, 'post');
+        try{
+            const req = await axios.post(host,options);
+            return req.data;
+        } catch (e) {
+            throw new Error(`Request to ${host} failed`)
+        }
     },
-    getRaw(url, callback) {
-        return new Promise(resolve => {
-            https.get(url, res => {
-                let body = '';
-                res.setEncoding('utf-8');
-                res.on('data', data => {
+    async get(host, path) {
+        let options = this.getOptions(host, path, 'get');
+        try{
+            let res = await axios.get(host,options);
+            return res.data;
+        } catch (e) {
+            throw new Error(`Request to ${host} failed`)
+        }
 
-                    body += data;
-                });
-                res.on('end', ()=>{
-                    resolve(body);
-                })
-            });
-        });
-    },
-    get(host, path) {
-        let options = this.getOptions(host, path, 'GET');
-        return new Promise((resolve => {
-            https.get(options, res => {
-                let body = '';
-                res.setEncoding('utf-8');
-                res.on('data', data => {
-
-                    body += data;
-                });
-
-                res.on('end', () => {
-                    setTimeout(() => {
-                        try {
-                            body = JSON.parse(body);
-                        } catch (e) {
-                            body = {error: e}
-                        }
-
-                        resolve(body)
-                    }, 300);
-
-                });
-            }).on('error', (err) => {
-                resolve({error: err.port})
-            });
-        }))
     }
 };
 module.exports = Calls;

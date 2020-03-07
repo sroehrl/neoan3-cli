@@ -8,7 +8,7 @@
   },
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "nyc mocha"
   },
   "author": "Stefan Roehrl",
   "contributors": [
@@ -37,6 +37,7 @@
   },
   "devDependencies": {
     "mocha": "^7.1.0",
-    "mock-fs": "^4.11.0"
+    "mock-fs": "^4.11.0",
+    "nyc": "^15.0.0"
   }
 }
