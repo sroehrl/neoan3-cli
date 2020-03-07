@@ -9,9 +9,8 @@ module.exports = {
         let conn = mysql.createConnection(finalCredentials);
         await conn.connect(function (err) {
             if (err) {
-                console.log('Unable to establish connection. ' +
-                    'Run "neoan3 migrate flush" to reset credentials');
-                process.exit();
+                throw new Error('Unable to establish connection. ' +
+                    'Run "neoan3 migrate flush" to reset credentials')
             }
             console.log('Connection established');
         });
