@@ -33,7 +33,7 @@ let Add = {
             last = last.substring(0, last.length - 1);
             let repo = parts[parts.length - 2] + '/' + last;
             // custom repo
-            let exists = await calls.get('api.github.com', '/repos/' + repo);
+            let exists = await calls.get('https://api.github.com', '/repos/' + repo);
 
             if (typeof exists.error !== 'undefined' ||
                 exists.message === 'Not Found') {
@@ -63,8 +63,7 @@ let Add = {
             }
             this.addCustomRepo(extra);
         } else {
-            let exists = await calls.get('packagist.org',
-                '/search.json?q=' + this.name);
+            let exists = await calls.get('https://packagist.org/search.json', {q:this.name});
             if (exists.total !== 1) {
                 throw new Error('Cannot find package '+this.name)
             }

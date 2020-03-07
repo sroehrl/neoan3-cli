@@ -4,7 +4,7 @@ const fs = require('fs-extra');
 
 module.exports = {
     init: async function(name, url, extra, options){
-        let external = await calls.getRaw(url);
+        let external = await calls.get(url);
         fs.writeFileSync('./n3-installer.n3',external);
 
         let executioner = execute('php n3-installer.n3',(error, stdout, stderr) => {
