@@ -21,6 +21,17 @@ describe("migration/mysqlConnection", function () {
     before(function () {
         inquirerOverwrite = inquirer.prompt;
         mysqlOverwrite.connection = mysql.createConnection;
+        mysql.createConnection = (credentials) =>{
+            return {
+                connect(cb){
+                    cb(false);
+
+                },
+                async query(sql){
+                    return true;
+                }
+            }
+        };
 
     });
     after(function () {
@@ -45,10 +56,17 @@ describe("migration/mysqlConnection", function () {
     });
     describe('#connect', function () {
         it("should return callable connection", async function () {
+
+            let connection = await mysqlConnection.connect(mockUserVars.database['test@sam']);
+            assert.ok(connection);
+        })
+    });
+    describe('#connect - fail', function () {
+        it("should return callable connection", async function () {
             mysql.createConnection = (credentials) =>{
                 return {
                     connect(cb){
-                        cb(false);
+                        cb(true);
 
                     },
                     async query(sql){
@@ -56,8 +74,11 @@ describe("migration/mysqlConnection", function () {
                     }
                 }
             };
-            let connection = await mysqlConnection.connect(mockUserVars.database['test@sam']);
-            assert.ok(connection);
+            try{
+                let connection = await mysqlConnection.connect(mockUserVars.database['test@sam']);
+            } catch (e) {
+                assert(e);
+            }
         })
     });
 });
