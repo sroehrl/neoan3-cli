@@ -15,6 +15,11 @@ const mockUserVars = {
         }
     }
 };
+const mockMigrate = {
+    "test": {
+        id:''
+    }
+};
 
 describe("migration/helper", function(){
     let inquirerOverwrite;
@@ -22,7 +27,14 @@ describe("migration/helper", function(){
         inquirerOverwrite = inquirer.prompt;
 
         mock({
-            './actions/userVariables/userVars.json': JSON.stringify(mockUserVars)
+            './actions/userVariables/userVars.json': JSON.stringify(mockUserVars),
+            './model':{
+                'test':{
+                    'migrate.json': mock.file({
+                        content:JSON.stringify(mockMigrate)
+                    })
+                }
+            }
         });
     });
 
@@ -45,5 +57,21 @@ describe("migration/helper", function(){
             })
         })
     });
-
+    describe('#asyncLoop', function(){
+        it("should synchronize loop behavior", async function () {
+            let array = ['a','b','c'];
+            let testString = '';
+            let targetString = 'abc';
+            await migrateHelper.asyncLoop(array, async (char)=>{
+                testString += char;
+            });
+            assert.equal(testString,targetString)
+        })
+    });
+    describe('#getModelJsons', function(){
+        it("should return mock migrate.json", async function () {
+            migrateHelper.compare.getModelJsons();
+            assert.deepEqual(migrateHelper.compare.knownModels.test,mockMigrate)
+        })
+    });
 });
