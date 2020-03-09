@@ -58,7 +58,9 @@ describe('String Helper', function () {
         it('should return true as newer version exists', function () {
             let local = '1.2.1';
             let external = '1.2.1';
-            assert.ok(stringHelper.analyzeVersions(local,external))
+            assert.ok(stringHelper.analyzeVersions(local,external));
+            // end evaluation is minor is higher
+            assert.ok(stringHelper.analyzeVersions('1.3.0',external))
         });
     });
 });
