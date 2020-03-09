@@ -1,7 +1,8 @@
 const fs = require('fs');
 const calls = require('./calls.js');
 const inquirer = require('inquirer');
-const execute = require('child_process').execSync;
+const cp = require('child_process');
+const execute = cp.execSync;
 let Add = {
     name: '',
     version: '',
@@ -10,18 +11,11 @@ let Add = {
         this.getComposerJson();
         this.splitNameString(nameStr);
     },
-
-    async processInput(input, type, extra) {
-        this.init(input);
-        if (typeof this.composerJson.require[this.name] !== 'undefined') {
-
-            throw new Error('Cannot overwrite existing declaration. ' +
-                'Please manually inspect composer.json');
-        }
-        this.composerJson.require[this.name] = this.version;
-        this.composerJson.extra['installer-paths']['./' + type +
-        '/{$name}'].push(this.name.toString());
-        if (typeof extra !== 'undefined') {
+    processing:{
+        uniqueCheck(){
+            return typeof Add.composerJson.require[Add.name] === 'undefined'
+        },
+        constructRepoName(extra){
             let parts = extra.split('/');
             let lastParts = parts[parts.length - 1].split('.');
             let last = '';
@@ -31,12 +25,26 @@ let Add = {
                 }
             });
             last = last.substring(0, last.length - 1);
-            let repo = parts[parts.length - 2] + '/' + last;
-            // custom repo
-            let exists = await calls.get('https://api.github.com', '/repos/' + repo);
+            return parts[parts.length - 2] + '/' + last;
+        },
+        async customRepo(extra){
 
-            if (typeof exists.error !== 'undefined' ||
-                exists.message === 'Not Found') {
+            let repo = this.constructRepoName(extra);
+            // custom repo
+            try {
+                let exists = await calls.get('https://api.github.com/repos/' + repo);
+                let infoTable = {};
+                ['name', 'homepage', 'description', 'url'].forEach(key => {
+                    if (exists[key]) {
+                        infoTable[key] = exists[key];
+                    }
+                });
+                if (exists.license) {
+                    infoTable.license = exists.license.name;
+                }
+
+                console.table(infoTable);
+            } catch (e) {
                 let msg = 'neoan3 was unable to find this repository. ' + "\n";
                 msg += 'It is possible that this repository is private. ' +
                     'Do you want to proceed?';
@@ -48,29 +56,33 @@ let Add = {
                 if (!answer.anyway) {
                     throw new Error('Process stopped by user');
                 }
-            } else {
-                let infoTable = {};
-                ['name','homepage','description','url'].forEach(key =>{
-                    if(exists[key]){
-                        infoTable[key] = exists[key];
-                    }
-                });
-                if(exists.license){
-                    infoTable.license = exists.license.name;
-                }
-
-                console.table(infoTable);
             }
+        }
+    },
+
+    async processInput(input, type, extra) {
+        this.init(input);
+        if(!this.processing.uniqueCheck()){
+            throw new Error('Cannot overwrite existing declaration. ' +
+                'Please manually inspect composer.json');
+        }
+
+        this.composerJson.require[this.name] = this.version;
+        this.composerJson.extra['installer-paths']['./' + type +
+        '/{$name}'].push(this.name.toString());
+        if (typeof extra !== 'undefined') {
+            await this.processing.customRepo(extra);
             this.addCustomRepo(extra);
         } else {
-            let exists = await calls.get('https://packagist.org/search.json', {q:this.name});
+            let exists = await calls.get('https://packagist.org/search.json', {q: this.name});
             if (exists.total !== 1) {
-                throw new Error('Cannot find package '+this.name)
+                throw new Error('Cannot find package ' + this.name)
             }
         }
         this.writeComposerJson();
         this.executeComposer();
     },
+
     addCustomRepo(location) {
         if (typeof this.composerJson.repositories === 'undefined') {
             this.composerJson.repositories = [];
@@ -93,10 +105,10 @@ let Add = {
         this.composerJson = JSON.parse(fs.readFileSync('./composer.json',
             'utf8'));
     },
-    executeComposer: function () {
+    executeComposer: function (force) {
         console.log('NOTE: I am trying to run composer synchronously.' +
             'If this fails, please run "composer update"');
-        if(!process.env.MOCKCP){
+        if (!process.env.MOCKCP && !force) {
             execute('composer update ', (error, stdout, stderr) => {
                 if (error) {
                     console.log('Failed to run composer. Please do so manually.');

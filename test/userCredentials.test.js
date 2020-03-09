@@ -1,6 +1,7 @@
 const assert = require('assert');
 const inquirer = require('inquirer');
 const userCredentials = require('../actions/userVariables/userCredentials');
+const databaseQ = require('../actions/userVariables/database.questions')
 const mock = require('mock-fs');
 
 const mockUserVars = {
@@ -59,6 +60,12 @@ describe("userCredentials", function(){
             inquirer.prompt = (questions) => Promise.resolve(answer);
             let credentials = await userCredentials.selectCredentials('database');
             assert.deepEqual(credentials,mockUserVars.database['test@sam']);
+        })
+    });
+    describe("#databaseConditional", function(){
+        it("should return depending on choice ", async function(){
+            let t = databaseQ[databaseQ.length-1].when({savePw:true})
+            assert.equal(t,true);
         })
     });
     describe("#flush - one", function(){
