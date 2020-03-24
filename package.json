@@ -1,6 +1,6 @@
 {
   "name": "neoan3-cli",
-  "version": "2.3.9",
+  "version": "2.3.10",
   "description": "neoan3 cli tool",
   "repository": {
     "type": "git",
@@ -21,7 +21,7 @@
   "dependencies": {
     "axios": "^0.19.2",
     "commander": "^4.1.0",
-    "download-git-repo": "^3.0.2",
+    "download-git-repo": "^1.1.0",
     "fs": "0.0.1-security",
     "fs-extra": "^8.1.0",
     "gift": "^0.10.2",
