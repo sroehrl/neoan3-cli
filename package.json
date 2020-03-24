@@ -21,22 +21,18 @@
   "dependencies": {
     "axios": "^0.19.2",
     "commander": "^4.1.0",
-    "download-git-repo": "^1.1.0",
+    "download-git-repo": "^3.0.2",
     "fs": "0.0.1-security",
     "fs-extra": "^8.1.0",
     "gift": "^0.10.2",
     "inquirer": "^7.0.0",
-    "mysql": "^2.17.1",
-    "prompt": "^1.0.0",
-    "prompt-choices": "^5.0.0",
-    "tailwindcss": "^1.1.4",
-    "vue": "^2.6.11"
+    "mysql": "^2.17.1"
   },
   "bin": {
     "neoan3": "./index.js"
   },
   "devDependencies": {
-    "mocha": "^7.1.0",
+    "mocha": "^7.1.1",
     "mock-fs": "^4.11.0",
     "nyc": "^15.0.0"
   }
