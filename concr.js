@@ -153,7 +153,7 @@ let concr = {
                 process.exit(1);
             }
             if (answer.internet) {
-                calls.get('https://neoan.us/capture.php?name=' + name);
+                calls.get('https://neoan.us/capture.php?name=' + name).catch(err=> console.log(err));
                 console.log('Fetching remote files...');
                 progressBar.start();
                 let msg = 'Download completed, running composer...\n';
