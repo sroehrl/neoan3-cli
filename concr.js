@@ -31,20 +31,24 @@ let concr = {
     executer: async function (cmd, type, name, extra, options) {
         if (typeof cmd !== 'undefined') {
             let localVersion = concr.getCurrentVersion(true);
-            let onlineVersion = await calls.get('api.npms.io',
-                '/v2/search?q=neoan3-cli');
-            if (typeof onlineVersion.results !== 'undefined') {
-                if (!stringHelper.analyzeVersions(localVersion,
-                    onlineVersion.results[0].package.version)) {
-                    console.log('/**************');
-                    console.log('*');
-                    console.log('* neoan3-cli version ' +
-                        onlineVersion.results[0].package.version +
-                        ' available. Consider updating');
-                    console.log('*');
-                    console.log('**************/');
+            try{
+                let onlineVersion = await calls.get('https://api.npms.io/v2/search?q=neoan3-cli');
+                if (typeof onlineVersion.results !== 'undefined') {
+                    if (!stringHelper.analyzeVersions(localVersion,
+                        onlineVersion.results[0].package.version)) {
+                        console.log('/**************');
+                        console.log('*');
+                        console.log('* neoan3-cli version ' +
+                            onlineVersion.results[0].package.version +
+                            ' available. Consider updating');
+                        console.log('*');
+                        console.log('**************/');
+                    }
                 }
+            } catch (e) {
+                console.log('npms.io currently not available')
             }
+
             switch (cmd) {
                 case 'new':
                     if (typeof type == 'undefined') {
@@ -154,7 +158,7 @@ let concr = {
                 process.exit(1);
             }
             if (answer.internet) {
-                calls.get('neoan.us', '/capture.php?name=' + name);
+                calls.get('https://neoan.us/capture.php?name=' + name).catch(err=> console.log(err));
                 console.log('Fetching remote files...');
                 progressBar.start();
                 let msg = 'Download completed, running composer...\n';

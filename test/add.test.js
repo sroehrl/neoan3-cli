@@ -73,7 +73,7 @@ describe('Add', function () {
     });
     describe('#processInput - composer package', function(){
         it('should find the composer package', async function(){
-            this.timeout(4000);
+            this.timeout(6000);
             process.env.MOCKCP = true;
             await add.processInput('vast-n3/vastn3','frame');
             add.getComposerJson();
@@ -83,7 +83,7 @@ describe('Add', function () {
 
     describe('#processInput - custom repo', function(){
         it('should find the github repo', async function(){
-            this.timeout(4000);
+            this.timeout(6000);
             process.env.MOCKCP = true;
             await add.processInput('neoan3-model/user','model', 'https://githunb.com/sroehrl/neoan3-userModel.git');
             add.getComposerJson();
@@ -92,7 +92,7 @@ describe('Add', function () {
     });
     describe('#processInput - 404 call', function(){
         it('should handle unfound custom repo', async function(){
-            this.timeout(4000);
+            this.timeout(6000);
             process.env.MOCKCP = true;
             inquirer.prompt = (questions) => Promise.resolve({anyway:false});
             try{
@@ -102,7 +102,7 @@ describe('Add', function () {
             }
         });
         it('should handle unfound package', async function(){
-            this.timeout(4000);
+            this.timeout(6000);
             process.env.MOCKCP = true;
             inquirer.prompt = (questions) => Promise.resolve({anyway:false});
             try{
