@@ -4,6 +4,7 @@ const fileCreator = require('./actions/fileCreator.js');
 const add = require('./actions/add.js');
 const download = require('download-git-repo');
 const execute = require('child_process').execSync;
+const server = require('child_process').spawn;
 const migrate = require('./actions/migrate.js');
 const publish = require('./actions/publish.js');
 const calls = require('./actions/calls.js');
@@ -100,6 +101,26 @@ let concr = {
                     break;
                 case 'credentials':
                     credentials.init(type, name);
+                    break;
+                case 'develop':
+                    console.log(ascii);
+                    console.log('Trying to start neoan3 dev-server at http://localhost:8080');
+                    console.log('-- stop process with "exit" or Ctrl+c --');
+
+                    let dataStream = server('php', ['-S','localhost:8080', '_neoan/server.php'],{
+                        stdio: 'inherit'
+                    });
+                    process.stdin.on('data',function(data){
+                        let input = data.toString();
+                        if(input.trim() === 'exit'){
+                            dataStream.kill('SIGKILL');
+                            console.log('good bye');
+                            process.exit();
+                        } else {
+                            console.log('Note: This terminal is still attached to the neoan3 dev-server. Stop with Ctrl+C or "exit"');
+                        }
+
+                    });
                     break;
                 default:
                     concr.error();
