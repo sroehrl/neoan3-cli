@@ -23,8 +23,9 @@ Official neoan3 cli tool
 7. [Database migration](#migrate)
 8. [Publishing components/frames/models to be reused](#publish)
 9. [File creation templating](#templates)
-10. [Reporting issues](#reporting-issues)
-11. [Collaboration](#collaborators-wanted)
+10. [Development server](#development-server-shortcut)
+11. [Reporting issues](#reporting-issues)
+12. [Collaboration](#collaborators-wanted)
     
 
 ### Requires
@@ -234,6 +235,9 @@ Depending on your needs, you have the following possibilities for your casing:
 | .camel | {{name.camel}} | Converts "name" to camelCase |
 | .pascal | {{name.pascal}} | Forces PascalCase (for edge cases) |
 
+# Development server shortcut
+
+Running `neoan3 develop` will start the built-in PHP server using the provided router-script.
 
 # Reporting issues
 
