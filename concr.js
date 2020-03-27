@@ -2,7 +2,7 @@ const inquirer = require('inquirer');
 const fs = require('fs');
 const fileCreator = require('./actions/fileCreator.js');
 const add = require('./actions/add.js');
-const download = require('download-git-repo');
+const download = require('./actions/gitDownload.js');
 const execute = require('child_process').execSync;
 const server = require('child_process').spawn;
 const migrate = require('./actions/migrate.js');
@@ -183,9 +183,9 @@ let concr = {
                 console.log('Fetching remote files...');
                 progressBar.start();
                 let msg = 'Download completed, running composer...\n';
-                download('sroehrl/neoan3', './', function (err) {
+                download.download({user:'sroehrl',repo:'neoan3',ref:'master'},'./').then(function (res) {
                     progressBar.stop();
-                    console.log(err ? 'Could not download' : msg);
+                    console.log(msg);
                     console.log('NOTE: I am trying to run composer ' +
                         'synchronously & quiet. ' +
                         'If this fails, please run "composer install"');
@@ -202,7 +202,10 @@ let concr = {
 
                     console.log('****');
                     console.log("* All done *");
+                    console.log("* you can now run 'neoan3 develop' to start the dev server *");
                     console.log("****");
+                }).catch(function(err){
+                    console.log('Could not download');
                 });
             } else {
                 console.log('Exiting. I cannot create an app without your permission to access the internet.');
