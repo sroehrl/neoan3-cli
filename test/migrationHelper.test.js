@@ -16,8 +16,11 @@ const mockUserVars = {
     }
 };
 const mockMigrate = {
-    "test": {
-        id:''
+    "test":{
+        "id":{
+            "key":"primary",
+            "type":"int(11)"
+        }
     }
 };
 
@@ -74,4 +77,55 @@ describe("migration/helper", function(){
             assert.deepEqual(migrateHelper.compare.knownModels.test,mockMigrate)
         })
     });
+    describe('#compareDown', function(){
+        it("should identify differences between knownModels and knownTables (master knownTables)", function(){
+            migrateHelper.compare.knownTables = {
+                "test_sub": [{
+                    "id":{
+                        "key":"primary",
+                        "type":"int(11)"
+                    },
+                    "test_id":{}
+                }]
+            };
+            migrateHelper.compare.getModelJsons();
+            migrateHelper.compare.compareDown();
+            console.log(migrateHelper.compare.knownTables);
+            assert.deepEqual(migrateHelper.compare.knownModels.test.test_sub, migrateHelper.compare.knownTables.test_sub)
+        })
+    });
+    describe('#compareUp', function(){
+        it("should identify differences between knownModels and knownTables (master knownModels)", function(){
+            migrateHelper.compare.getModelJsons();
+
+            // scenario: trigger create
+            migrateHelper.compare.knownModels.test.test_sub = {
+                id:{
+                    key: 'primary',
+                    type: 'int(11)'
+                },
+                test_id: {
+                    key: false,
+                    type: "int(11)"
+                }
+            };
+            // scenario: test-table in db doesn't have id
+            migrateHelper.compare.knownTables = {
+                "test":{
+                    "new_column":{
+                        "type":"varchar(200)",
+                        "key": false
+                    }
+                }
+            };
+            let queries = migrateHelper.compare.compareUp();
+            let expectAlter = 'ALTER TABLE `test` ADD COLUMN `id` int(11);\n';
+            let expectInsert = 'CREATE TABLE `test_sub`(`id` int(11) NOT NULL \n' +
+                ',`test_id` int(11) NOT NULL \n' +
+                ',PRIMARY KEY(id)\n' +
+                ');';
+            assert.deepEqual(queries,[expectAlter,expectInsert]);
+
+        })
+    })
 });
