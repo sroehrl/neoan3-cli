@@ -1,4 +1,3 @@
-const mysqliConnection = require('./mysqlConnection.js');
 const fs = require('fs');
 
 let dir = './';
