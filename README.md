@@ -5,7 +5,7 @@ neoan3 CLI helper
 [![npm version](https://badge.fury.io/js/neoan3-cli.svg)](https://badge.fury.io/js/neoan3-cli)
 [![GitHub version](https://badge.fury.io/gh/sroehrl%2Fneoan3-cli.svg)](https://badge.fury.io/gh/sroehrl%2Fneoan3-cli)
 
-## Automate your [neoan3](https://github.com/sroehrl/neoan3) needs ([documentation](http://neoan.us/neoan3docs/getting-started/))
+## Automate your [neoan3](https://neoan3.rocks) needs
 
 Official neoan3 cli tool 
 
@@ -244,7 +244,7 @@ Running `neoan3 develop` will start the built-in PHP server using the provided r
 The GitHub repo [neoan3-cli](https://github.com/sroehrl/neoan3-cli) is actively maintained. Please report issues there.
 
 # Collaborators wanted
-Over 8000 neoan3 applications are waiting for documentation. I'd love to have some people to help me:
+Over 10.000 neoan3 applications are waiting for documentation. I'd love to have some people to help me:
 
 - document neoan3 (framework)
 - document neoan3-cli
