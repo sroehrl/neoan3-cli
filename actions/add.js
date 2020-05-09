@@ -30,16 +30,16 @@ let Add = {
         },
         async customRepo(extra){
 
-            let repo;
+            let headers, repo = this.constructRepoName(extra);
             if(process.env.NOAUTH){
-                repo = this.constructRepoName(extra);
+                headers = [];
             } else {
-                repo = await this.authenticateCustomRepo(extra);
+                headers = await this.authenticateCustomRepo();
             }
 
             // custom repo
             try {
-                let exists = await calls.get('https://api.github.com/repos/' + repo);
+                let exists = await calls.get('https://api.github.com/repos/' + repo, headers);
                 let infoTable = {};
                 ['name', 'homepage', 'description', 'url'].forEach(key => {
                     if (exists[key]) {
@@ -65,15 +65,11 @@ let Add = {
                 }
             }
         },
-        async authenticateCustomRepo(extra){
+        async authenticateCustomRepo(){
             console.log('Custom repository. Please provide access token');
             credentials.readFile();
             let useToken = await credentials.selectCredentials('token');
-
-            let repo = this.constructRepoName(extra);
-            calls.getOptions('https://api.github.com/repos/' + repo);
-            calls.options.headers['Authorization'] = `${useToken.type} ${useToken.token}`;
-            return repo;
+            return {'Authorization': `${useToken.type} ${useToken.token}`};
         }
     },
 

@@ -5,8 +5,8 @@ describe('Calls', function () {
 
     describe("#getOptions", function(){
         it('should set options', function () {
-            let options = calls.getOptions('example.com','api/1', 'post');
-            assert.equal(options.url,'example.com')
+            let options = calls.getOptions('api/1', 'post');
+            assert.equal(options.method,'post')
         })
 
     });
