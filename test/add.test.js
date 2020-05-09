@@ -85,6 +85,7 @@ describe('Add', function () {
         it('should find the github repo', async function(){
             this.timeout(6000);
             process.env.MOCKCP = true;
+            process.env.NOAUTH = true;
             await add.processInput('neoan3-model/user','model', 'https://githunb.com/sroehrl/neoan3-userModel.git');
             add.getComposerJson();
             assert.equal(add.composerJson.require["neoan3-model/user"],'dev-master');

@@ -1,5 +1,6 @@
 let axios = require('axios');
 const Calls = {
+    options:null,
     getOptions(host, path, method) {
         let options = {
             url: host,
@@ -11,10 +12,11 @@ const Calls = {
         } else {
             options.data = path;
         }
+        this.options = options;
         return options;
     },
     async post(host, body) {
-        let options = this.getOptions(host, body, 'post');
+        let options = this.options || this.getOptions(host, body, 'post');
         try{
             const req = await axios.post(host,options);
             return req.data;
@@ -23,7 +25,8 @@ const Calls = {
         }
     },
     async get(host, path) {
-        let options = this.getOptions(host, path, 'get');
+
+        let options = this.options || this.getOptions(host, path, 'get');
         try{
             let res = await axios.get(host,options);
             return res.data;
