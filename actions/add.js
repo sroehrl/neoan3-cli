@@ -2,6 +2,7 @@ const fs = require('fs');
 const calls = require('./calls.js');
 const inquirer = require('inquirer');
 const cp = require('child_process');
+const credentials = require('./userVariables/userCredentials.js');
 const execute = cp.execSync;
 let Add = {
     name: '',
@@ -29,7 +30,13 @@ let Add = {
         },
         async customRepo(extra){
 
-            let repo = this.constructRepoName(extra);
+            let repo;
+            if(process.env.NOAUTH){
+                repo = this.constructRepoName(extra);
+            } else {
+                repo = await this.authenticateCustomRepo(extra);
+            }
+
             // custom repo
             try {
                 let exists = await calls.get('https://api.github.com/repos/' + repo);
@@ -57,6 +64,16 @@ let Add = {
                     throw new Error('Process stopped by user');
                 }
             }
+        },
+        async authenticateCustomRepo(extra){
+            console.log('Custom repository. Please provide access token');
+            credentials.readFile();
+            let useToken = await credentials.selectCredentials('token');
+
+            let repo = this.constructRepoName(extra);
+            calls.getOptions('https://api.github.com/repos/' + repo);
+            calls.options.headers['Authorization'] = `${useToken.type} ${useToken.token}`;
+            return repo;
         }
     },
 
