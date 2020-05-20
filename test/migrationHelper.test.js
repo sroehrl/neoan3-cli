@@ -20,6 +20,10 @@ const mockMigrate = {
         "id":{
             "key":"primary",
             "type":"int(11)"
+        },
+        "group":{
+            "key":false,
+            "type":"varchar(20)"
         }
     }
 };
@@ -90,7 +94,6 @@ describe("migration/helper", function(){
             };
             migrateHelper.compare.getModelJsons();
             migrateHelper.compare.compareDown();
-            console.log(migrateHelper.compare.knownTables);
             assert.deepEqual(migrateHelper.compare.knownModels.test.test_sub, migrateHelper.compare.knownTables.test_sub)
         })
     });
@@ -120,11 +123,12 @@ describe("migration/helper", function(){
             };
             let queries = migrateHelper.compare.compareUp();
             let expectAlter = 'ALTER TABLE `test` ADD COLUMN `id` int(11);\n';
+            let expectAlter2 = 'ALTER TABLE `test` ADD COLUMN `group` varchar(20) AFTER `id`;\n';
             let expectInsert = 'CREATE TABLE `test_sub`(`id` int(11) NOT NULL \n' +
                 ',`test_id` int(11) NOT NULL \n' +
                 ',PRIMARY KEY(id)\n' +
                 ');';
-            assert.deepEqual(queries,[expectAlter,expectInsert]);
+            assert.deepEqual(queries,[expectAlter,expectAlter2,expectInsert]);
 
         })
     })
