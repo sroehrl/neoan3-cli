@@ -1,5 +1,6 @@
-let axios = require('axios');
+// let axios = require('axios');
 const Calls = {
+    handler: require('axios'),
     getOptions(path, method, headers) {
         let options = {
             method: method,
@@ -26,7 +27,7 @@ const Calls = {
         options.url = host;
 
         try {
-            const req = await axios.post(host, options);
+            const req = await this.handler.post(host, options);
             return req.data;
         } catch (e) {
             throw new Error(`Request to ${host} failed`)
@@ -37,7 +38,7 @@ const Calls = {
         let options = this.getOptions(path, 'get', headers);
         options.url = host;
         try {
-            let res = await axios.get(host, options);
+            let res = await this.handler.get(host, options);
             return res.data;
         } catch (e) {
             throw new Error(`Request to ${host} failed`)

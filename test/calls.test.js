@@ -19,7 +19,7 @@ describe('Calls', function () {
     });
     describe("#post", function(){
         it('should create a post', async function () {
-            this.timeout(6000);
+            this.timeout(8000);
             let data = await calls.post('https://jsonplaceholder.typicode.com/posts',{
                 title: 'foo',
                 body: 'bar',
