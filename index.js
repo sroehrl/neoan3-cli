@@ -3,6 +3,8 @@
 const program = require('commander');
 const concr = require('./concr');
 
+console.log('DEPRECATION warning: Consider switching to https://github.com/neoan3/cli')
+
 program
     .version(concr.getCurrentVersion(), '-v, --version')
     .arguments('<cmd> [type] [name] [extra]')
