@@ -1,10 +1,12 @@
 const inquirer = require('inquirer');
 const fs = require('fs');
 const databaseQuestions = require('./database.questions.js');
+const tokenQuestions = require('./token.questions.js');
 
 module.exports = {
     credentials:{
-        database:{}
+        database:{},
+        token:{}
     },
     flush(type,name){
         if(typeof name !== 'undefined'){
@@ -15,6 +17,8 @@ module.exports = {
     },
     readFile(){
         if(fs.existsSync(__dirname + '/userVars.json')){
+            let check = fs.readFileSync(__dirname +
+                '/userVars.json', 'utf8');
             this.credentials = JSON.parse(fs.readFileSync(__dirname +
                 '/userVars.json', 'utf8'));
         } else {
@@ -22,11 +26,14 @@ module.exports = {
         }
     },
     async writeFile(){
-        await fs.writeFile(__dirname + '/userVars.json',
-            JSON.stringify(this.credentials, null, 4),
-            function (err) {
-                if (err) throw err;
-            });
+        let content = JSON.stringify(this.credentials, null, 4);
+        try{
+            await fs.writeFileSync(__dirname + '/userVars.json',
+                content);
+        } catch (e) {
+            console.error(e)
+        }
+
     },
     async selectCredentials(type){
         let choices = Object.keys(this.credentials[type]);
@@ -41,7 +48,8 @@ module.exports = {
         } else {
             let returnCredentials;
             switch (type) {
-                case 'database': returnCredentials = this.newDatabase(); break;
+                case 'database': returnCredentials = await this.newDatabase(); break;
+                case 'token': returnCredentials = await this.newToken(); break;
             }
             return returnCredentials;
         }
@@ -49,7 +57,13 @@ module.exports = {
     async newDatabase(){
         let newCredentials = await inquirer.prompt(databaseQuestions);
         this.credentials.database[newCredentials.name+'@'+newCredentials.host] = newCredentials;
-        this.writeFile();
+        await this.writeFile();
+        return newCredentials;
+    },
+    async newToken(){
+        let newCredentials = await inquirer.prompt(tokenQuestions);
+        this.credentials.token[newCredentials.name] = newCredentials;
+        await this.writeFile();
         return newCredentials;
     }
 

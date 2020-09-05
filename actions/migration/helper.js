@@ -139,7 +139,7 @@ const migrateHelper = {
             return createString;
         },
         describeTable: async function (tableName) {
-            let fields = await this.mysqlConnection.query('DESCRIBE ' + tableName);
+            let fields = await this.mysqlConnection.query('DESCRIBE `' + tableName + '`');
             this.knownTables[tableName] = {};
             let currField;
             await migrateHelper.asyncLoop(fields, async (field) => {

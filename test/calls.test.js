@@ -5,8 +5,8 @@ describe('Calls', function () {
 
     describe("#getOptions", function(){
         it('should set options', function () {
-            let options = calls.getOptions('example.com','api/1', 'post');
-            assert.equal(options.url,'example.com')
+            let options = calls.getOptions('api/1', 'post');
+            assert.equal(options.method,'post')
         })
 
     });
@@ -19,7 +19,7 @@ describe('Calls', function () {
     });
     describe("#post", function(){
         it('should create a post', async function () {
-            this.timeout(6000);
+            this.timeout(8000);
             let data = await calls.post('https://jsonplaceholder.typicode.com/posts',{
                 title: 'foo',
                 body: 'bar',

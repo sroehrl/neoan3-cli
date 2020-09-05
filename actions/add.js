@@ -2,6 +2,7 @@ const fs = require('fs');
 const calls = require('./calls.js');
 const inquirer = require('inquirer');
 const cp = require('child_process');
+const credentials = require('./userVariables/userCredentials.js');
 const execute = cp.execSync;
 let Add = {
     name: '',
@@ -29,10 +30,16 @@ let Add = {
         },
         async customRepo(extra){
 
-            let repo = this.constructRepoName(extra);
+            let headers, repo = this.constructRepoName(extra);
+            if(process.env.NOAUTH){
+                headers = [];
+            } else {
+                headers = await this.authenticateCustomRepo();
+            }
+
             // custom repo
             try {
-                let exists = await calls.get('https://api.github.com/repos/' + repo);
+                let exists = await calls.get('https://api.github.com/repos/' + repo, headers);
                 let infoTable = {};
                 ['name', 'homepage', 'description', 'url'].forEach(key => {
                     if (exists[key]) {
@@ -57,6 +64,12 @@ let Add = {
                     throw new Error('Process stopped by user');
                 }
             }
+        },
+        async authenticateCustomRepo(){
+            console.log('Custom repository. Please provide access token');
+            credentials.readFile();
+            let useToken = await credentials.selectCredentials('token');
+            return {'Authorization': `${useToken.type} ${useToken.token}`};
         }
     },
 
