@@ -1,5 +1,11 @@
 # neoan3-cli
-neoan3 CLI helper
+
+### NOTICE
+No more dependencies, pure PHP. This package is deprecated. 
+Please use [neoan3/cli](https://github.com/neoan3/cli) instead.
+
+_NOTE:_ If you already have a node-version of neoan3 installed, 
+please **uninstall** it prior to installing the PHP-version.
 
 [![Build Status](https://travis-ci.com/sroehrl/neoan3-cli.svg?branch=master)](https://travis-ci.com/sroehrl/neoan3-cli)
 [![npm version](https://badge.fury.io/js/neoan3-cli.svg)](https://badge.fury.io/js/neoan3-cli)
